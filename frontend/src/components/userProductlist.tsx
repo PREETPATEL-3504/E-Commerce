@@ -10,25 +10,24 @@ import { setProductList } from "../Store/Reducers/ProduceList";
 const UserProductlist = () => {
   const [products, setProducts] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(0);
-  const itemsPerPage = 5;
+  const [totalProductsCount, setTotalProductsCount] = React.useState(0);
+  const itemsPerPage = 2;
 
   const dispatch = useAppDispatch();
   dispatch(setProductList(products));
 
-
   useEffect(() => {
-    const url = `http://localhost:5000/api/products`;
+    const url = `http://localhost:5000/api/products?offset=${
+      currentPage * itemsPerPage
+    }&limit=${itemsPerPage}`;
     axios.get(url).then((res) => {
-      setProducts(res.data);
+      setProducts(res.data.data);
+      setTotalProductsCount(res.data.total);
     });
-  }, []);
+  }, [currentPage]);
 
-  const currentItems = paginate(products, itemsPerPage, currentPage);
-  const pageCount = getPageCount(products, itemsPerPage);
 
-  const handlePageClick = (event: any) => {
-    setCurrentPage(event.selected);
-  };
+  const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
   return (
     <>
@@ -37,7 +36,9 @@ const UserProductlist = () => {
           <h1 className="text-2xl text-white text-center font-bold  ">
             Product List
           </h1>
-          <h4 className="text-white text-center ml-[25%] font-bold">Your Cart</h4>
+          <h4 className="text-white text-center ml-[25%] font-bold">
+            Your Cart
+          </h4>
         </div>
 
         <table className="min-w-full border border-gray-300">
@@ -52,7 +53,7 @@ const UserProductlist = () => {
             </tr>
           </thead>
           <tbody>
-            {currentItems.map((product: any) => (
+            {products.map((product: any) => (
               <tr key={product.id} className="bg-white">
                 <td className="border px-4 py-2">{product.name}</td>
                 <td className="border px-4 py-2">{product.price}</td>
@@ -75,16 +76,27 @@ const UserProductlist = () => {
             ))}
           </tbody>
         </table>
-        <ReactPaginate
-          breakLabel="..."
-          nextLabel={<FaChevronRight />}
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={1}
-          pageCount={pageCount}
-          previousLabel={<FaChevronLeft />}
-          className="text-white items-center flex gap-5 justify-center"
-          renderOnZeroPageCount={null}
-        />
+        <div className="flex justify-center mt-4">
+          <button
+            disabled={currentPage === 0}
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className="bg-gray-300 text-gray-700 px-2 py-1 rounded mr-2 hover:bg-gray-400"
+          >
+            <FaChevronLeft />
+          </button>
+
+          <button className="px-2 py-1 rounded mr-2  bg-blue-500 text-white">
+            {currentPage}
+          </button>
+
+          <button
+            disabled={currentPage === totalPages - 1}
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className="bg-gray-300  text-gray-700 px-2 py-1 rounded hover:bg-gray-400"
+          >
+            <FaChevronRight />
+          </button>
+        </div>
       </div>
     </>
   );

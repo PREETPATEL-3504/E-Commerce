@@ -41,7 +41,6 @@ const AdminProductlist = () => {
   };
 
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
-  console.log("Total pages", totalPages);
 
   return (
     <div className="container bg-black-300 mx-auto p-4 h-full">
