@@ -8,7 +8,7 @@ const Navbar = ({setIsLoggedIn}: any) => {
   const logOutHnadler = () => {
     setIsLoggedIn(false);
     toast("logged out successfully",{
-      autoClose: 3000,
+      autoClose: 1000,
     });
     navigate("/login");
     localStorage.clear();

@@ -23,6 +23,7 @@ const Login = ({ setIsLoggedIn }: any) => {
       const res = await axios.post(url, data);
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
+        localStorage.setItem("id", res.data.data.id);
         setIsLoggedIn(true);
         {
           if (res.data.data.role === "admin") {
@@ -32,7 +33,7 @@ const Login = ({ setIsLoggedIn }: any) => {
           }
         }
         toast("Login Success", {
-          autoClose: 3000,
+          autoClose: 1000,
         });
         setData({
           ...data,

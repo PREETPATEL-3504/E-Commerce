@@ -23,14 +23,18 @@ const Product = sequelize.define("Product", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  description:{
+  description: {
     type: DataTypes.TEXT,
-    allowNull: true,  
+    allowNull: true,
   },
-  image_url:{
+  image_url: {
     type: DataTypes.STRING,
     allowNull: true,
-  }
+  },
+  AdminId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
 sequelize

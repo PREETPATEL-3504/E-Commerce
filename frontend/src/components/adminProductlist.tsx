@@ -35,7 +35,7 @@ const AdminProductlist = () => {
       .then(() => {
         setProducts(products.filter((p: any) => p.id !== id));
         toast.success("Product deleted", {
-          autoClose: 3000,
+          autoClose: 1000,
         });
       })
       .catch((error) => {

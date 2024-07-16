@@ -11,15 +11,25 @@ const AddProduct = async (req, res) => {
       data: null,
     });
   } else {
-    const { name, price, description, quantity, image_url } = req.body;
+    const { name, price, description, quantity, AdminId } = req.body;
+    const { image_url } = req.file.path;
 
     const createdAt = new Date().toISOString().slice(0, 19).replace("T", " ");
     const updatedAt = createdAt;
     const query =
-      "INSERT INTO Products (name, price, description, quantity, image_url, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?,?,?)";
+      "INSERT INTO Products (name, price, description, quantity, image_url, AdminId, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?,?,?, ?)";
     con.query(
       query,
-      [name, price, description, quantity, image_url, createdAt, updatedAt],
+      [
+        name,
+        price,
+        description,
+        quantity,
+        image_url,
+        AdminId,
+        createdAt,
+        updatedAt,
+      ],
       function (err, result) {
         if (err) {
           console.error("Error adding product:", err);

@@ -6,7 +6,8 @@ function productValidate(product) {
     price: joi.number().required(),
     quantity: joi.number().required(),
     description: joi.string().required(),
-    image_url: joi.any()
+    image_url: joi.any(),
+    AdminId: joi.any().required(),
   });
   return schema.validate(product);
 }

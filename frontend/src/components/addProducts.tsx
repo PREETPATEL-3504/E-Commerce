@@ -12,6 +12,7 @@ const AddProducts = () => {
     quantity: string | number;
     image_url: any;
     description: string;
+    AdminId: number;
   }
 
   useEffect(() => {
@@ -31,7 +32,10 @@ const AddProducts = () => {
     quantity: "",
     image_url: "",
     description: "",
+    AdminId: 0,
   });
+  const AdminId = localStorage.getItem("id");
+ 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,7 +45,7 @@ const AddProducts = () => {
         const res = await axios.patch(url, data);
         if (res.status === 200) {
           toast.success("Product Updated Successfully", {
-            autoClose: 3000,
+            autoClose: 1000,
           });
           navigate("/admin");
         } else {
@@ -55,12 +59,14 @@ const AddProducts = () => {
         formdata.append("price", String(data.price));
         formdata.append("quantity", String(data.quantity));
         formdata.append("description", data.description);
+        formdata.append("image_url", data.image_url);
+        formdata.append("AdminId", String(AdminId));
 
         const url = "http://localhost:5000/api/products";
         const res = await axios.post(url, formdata);
         if (res.status === 200) {
           toast.success("Product Added Successfully", {
-            autoClose: 3000,
+            autoClose: 1000,
           });
           navigate("/admin");
           setData({
