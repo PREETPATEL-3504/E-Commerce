@@ -2,21 +2,29 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getPageCount, paginate } from "../Pagination";
-import ReactPaginate from "react-paginate";
+import { useAppDispatch } from "../Store/Hooks";
+import { setProductList } from "../Store/Reducers/ProduceList";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const AdminProductlist = () => {
   const [products, setProducts] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(0);
-  const itemsPerPage = 1;
+  const [totalProductsCount, setTotalProductsCount] = React.useState(0);
+  const itemsPerPage = 2;
+
+  const dispatch = useAppDispatch();
+  dispatch(setProductList(products));
 
   useEffect(() => {
-    const url = `http://localhost:5000/api/products`;
+    const url = `http://localhost:5000/api/products?offset=${
+      currentPage * itemsPerPage
+    }&limit=${itemsPerPage}`;
     axios.get(url).then((res) => {
-      setProducts(res.data);
+      setProducts(res.data.data);
+      setTotalProductsCount(res.data.total);
+      console.log()
     });
-  }, []);
+  }, [currentPage]);
 
   const onDelete = (id: any) => {
     axios
@@ -32,17 +40,15 @@ const AdminProductlist = () => {
       });
   };
 
-  const currentItems = paginate(products, itemsPerPage, currentPage);
-  const pageCount = getPageCount(products, itemsPerPage);
+  const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
+  console.log("Total pages", totalPages);
 
-  const handlePageClick = (event: any) => {
-    setCurrentPage(event.selected);
-  };
   return (
-    <div className="container bg-black-300 mx-auto p-4">
+    <div className="container bg-black-300 mx-auto p-4 h-full">
       <h1 className="text-2xl text-white text-center font-bold mb-4">
         Product List
       </h1>
+
       <table className="w-full  border border-gray-300 rounded-3xl p-9 mb-5">
         <thead>
           <tr className="bg-gray-100">
@@ -55,7 +61,7 @@ const AdminProductlist = () => {
           </tr>
         </thead>
         <tbody>
-          {currentItems.map((product: any) => (
+          {products.map((product: any) => (
             <tr key={product.id} className="bg-white">
               <td className="border px-4 py-2">{product.name}</td>
               <td className="border px-4 py-2">{product.price}</td>
@@ -83,16 +89,28 @@ const AdminProductlist = () => {
           ))}
         </tbody>
       </table>
-      <ReactPaginate
-        breakLabel="..."
-        nextLabel={<FaChevronRight />}
-        onPageChange={handlePageClick}
-        pageRangeDisplayed={1}
-        pageCount={pageCount}
-        previousLabel={<FaChevronLeft />}
-        className="text-white items-center flex gap-5 justify-center"
-        renderOnZeroPageCount={null}
-      />
+
+      <div className="flex justify-center mt-4">
+        <button
+          disabled={currentPage === 0}
+          onClick={() => setCurrentPage(currentPage - 1)}
+          className="bg-gray-300 text-gray-700 px-2 py-1 rounded mr-2 hover:bg-gray-400"
+        >
+          <FaChevronLeft />
+        </button>
+
+        <button className="px-2 py-1 rounded mr-2  bg-blue-500 text-white">
+          {currentPage}
+        </button>
+
+        <button
+          disabled={currentPage === totalPages - 1}
+          onClick={() => setCurrentPage(currentPage + 1)}
+          className="bg-gray-300  text-gray-700 px-2 py-1 rounded hover:bg-gray-400"
+        >
+          <FaChevronRight />
+        </button>
+      </div>
     </div>
   );
 };

@@ -5,7 +5,6 @@ const productValidate = require("../Validation/productValidation");
 const AddProduct = async (req, res) => {
   const { error, value } = productValidate(req.body);
   if (error) {
-    console.log("=====================", error);
     res.status(400).json({
       status: 400,
       message: error.details[0].message,
@@ -40,12 +39,39 @@ const AddProduct = async (req, res) => {
     );
   }
 };
-
 const GetProduct = async (req, res) => {
-  con.query("SELECT * FROM Products", function (error, rows) {
-    if (error) return res.status(200).json({ error: error });
-    res.status(200).json(rows);
-  });
+  const offset = parseInt(req.query.offset) || 0;
+  const limit = parseInt(req.query.limit) || 10;
+
+  try {
+    const [result, totalResult] = await Promise.all([
+      new Promise((resolve, reject) => {
+        con.query(
+          `SELECT * FROM Products LIMIT ? OFFSET ?`,
+          [limit, offset],
+          (error, rows) => {
+            if (error) reject(error);
+            else resolve(rows);
+          }
+        );
+      }),
+      new Promise((resolve, reject) => {
+        con.query(`SELECT COUNT(*) AS total FROM Products`, (error, result) => {
+          if (error) reject(error);
+          else resolve(result[0].total);
+        });
+      }),
+    ]);
+
+    res.status(200).json({
+      data: result,
+      total: totalResult
+    });
+
+  } catch (error) {
+    console.error("Error handling request:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 const deleteProduct = async (req, res) => {
