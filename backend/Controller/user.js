@@ -43,7 +43,6 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   const { error, value } = LoginValidation(req.body);
-  console.log("===========================", error);
   if (error) {
     return res.status(400).json({
       status: 400,

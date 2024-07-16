@@ -50,8 +50,14 @@ const AddProducts = () => {
       } catch (error) {}
     } else {
       try {
+        const formdata = new FormData();
+        formdata.append("name", data.name);
+        formdata.append("price", String(data.price));
+        formdata.append("quantity", String(data.quantity));
+        formdata.append("description", data.description);
+
         const url = "http://localhost:5000/api/products";
-        const res = await axios.post(url, data);
+        const res = await axios.post(url, formdata);
         if (res.status === 200) {
           toast.success("Product Added Successfully", {
             autoClose: 3000,
@@ -80,7 +86,7 @@ const AddProducts = () => {
               {id ? "Update Products" : "Add Products"}
             </h3>
           </div>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} encType="multipart/form-data">
             <div className="flex flex-col gap-4 p-6">
               <div className="relative h-11 w-full min-w-[200px]">
                 <input
@@ -155,9 +161,7 @@ const AddProducts = () => {
                       if (e.target.files && e.target.files.length > 0) {
                         setData({
                           ...data,
-                          image_url: window.URL.createObjectURL(
-                            e.target.files[0]
-                          ),
+                          image_url: e.target.files[0],
                         });
                       }
                     }}
@@ -172,9 +176,7 @@ const AddProducts = () => {
                       if (e.target.files && e.target.files.length > 0) {
                         setData({
                           ...data,
-                          image_url: window.URL.createObjectURL(
-                            e.target.files[0]
-                          ),
+                          image_url: e.target.files[0],
                         });
                       }
                     }}

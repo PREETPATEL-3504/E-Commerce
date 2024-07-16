@@ -12,6 +12,7 @@ const AddProduct = async (req, res) => {
     });
   } else {
     const { name, price, description, quantity, image_url } = req.body;
+
     const createdAt = new Date().toISOString().slice(0, 19).replace("T", " ");
     const updatedAt = createdAt;
     const query =
@@ -39,6 +40,7 @@ const AddProduct = async (req, res) => {
     );
   }
 };
+
 const GetProduct = async (req, res) => {
   const offset = parseInt(req.query.offset) || 0;
   const limit = parseInt(req.query.limit) || 10;
@@ -65,9 +67,8 @@ const GetProduct = async (req, res) => {
 
     res.status(200).json({
       data: result,
-      total: totalResult
+      total: totalResult,
     });
-
   } catch (error) {
     console.error("Error handling request:", error);
     return res.status(500).json({ error: "Internal Server Error" });

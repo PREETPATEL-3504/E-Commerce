@@ -22,10 +22,13 @@ const AdminProductlist = () => {
     axios.get(url).then((res) => {
       setProducts(res.data.data);
       setTotalProductsCount(res.data.total);
-      console.log()
+      console.log();
     });
   }, [currentPage]);
-
+  
+  const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
+  
+  //Products Delete Api
   const onDelete = (id: any) => {
     axios
       .delete(`http://localhost:5000/api/products/${id}`)
@@ -39,8 +42,6 @@ const AdminProductlist = () => {
         console.error("Error deleting product:", error);
       });
   };
-
-  const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
   return (
     <div className="container bg-black-300 mx-auto p-4 h-full">

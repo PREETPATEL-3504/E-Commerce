@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const db = require("./db");
 const bodyParser = require("body-parser");
+const upload = require("./Controller/multerConfig");
 const app = express();
 app.use(bodyParser.json())
 
@@ -13,23 +14,11 @@ const corsOption = {
 app.use(cors(corsOption))
 
 // Routes
-const addProduct = require('./Routes/Product');
-app.use('/api', addProduct);
+const router = require("./Routes/User");
+app.use('/api', router);
 
-const GetProduct = require('./Routes/Product');
-app.use('/api', GetProduct);
-
-const deleteProduct = require('./Routes/Product');
-app.use('/api', deleteProduct);
-
-const updateProduct = require('./Routes/Product');
-app.use('/api', updateProduct);
-
-const getProductbyid = require('./Routes/Product');
-app.use('/api', getProductbyid);
-
-const userRegister = require('./Routes/User')
-app.use('/api', userRegister);
+const Product = require('./Routes/Product');
+app.use('/api', Product);
 
 
 app.listen(5000, () => {
