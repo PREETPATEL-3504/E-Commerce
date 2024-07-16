@@ -13,28 +13,33 @@ const AddProduct = async (req, res) => {
     });
   } else {
     const { name, price, description, quantity, image_url } = req.body;
-    const createdAt = new Date();
-    const query = 'INSERT INTO Products (name, price, description, quantity, image_url, createdAt) VALUES (?, ?, ?, ?, ?)';
-    con.query(query, [name, price, description, quantity, image_url], function(err, result) {
-      if (err) {
-        console.error("Error adding product:", err);
-        res.status(500).json({
-          status: 500,
-          message: "Internal Server Error",
-          data: null,
+    const createdAt = new Date().toISOString().slice(0, 19).replace("T", " ");
+    const updatedAt = createdAt;
+    const query =
+      "INSERT INTO Products (name, price, description, quantity, image_url, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?,?,?)";
+    con.query(
+      query,
+      [name, price, description, quantity, image_url, createdAt, updatedAt],
+      function (err, result) {
+        if (err) {
+          console.error("Error adding product:", err);
+          res.status(500).json({
+            status: 500,
+            message: "Internal Server Error",
+            data: null,
+          });
+          return;
+        }
+        console.log("Product added successfully", result);
+        res.status(200).json({
+          status: 200,
+          message: "Product added successfully",
+          data: result,
         });
-        return;
       }
-      console.log("Product added successfully", result);
-      res.status(200).json({
-        status: 200,
-        message: "Product added successfully",
-        data: result,
-      });
-    });
+    );
   }
 };
-
 
 const GetProduct = async (req, res) => {
   con.query("SELECT * FROM Products", function (error, rows) {
@@ -45,7 +50,7 @@ const GetProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   con.query(
-    "DELETE FROM Products WHERE id = ",
+    "DELETE FROM Products WHERE id = ?",
     [req.params.id],
     function (error, result) {
       if (error) return res.status(200).json({ error: error });
@@ -55,27 +60,35 @@ const deleteProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-  con.query(
-    "UPDATE Products SET name: req.body.name,price: req.body.price, quantity: req.body.quantity, description: req.body.description, image_url: req.body.image_url WHERE id = "[
-      req.params.id
-    ],
-    function (error, result) {
-      if (error) return res.status(200).json({ error: error });
-      res.status(200).json({ message: "Product updated successfully" });
+  try {
+    const productId = req.params.id;
+    const { name, price, description, quantity, image_url } = req.body;
+    const createdAt = new Date().toISOString().slice(0, 19).replace("T", " ");
+    const updatedAt = createdAt;
+
+    const updateData = {
+      name: name,
+      price: price,
+      description: description,
+      quantity: quantity,
+      image_url: image_url,
+      updatedAt: updatedAt,
+    };
+
+    const updatedProduct = await con.query(
+      "UPDATE Products SET ? WHERE id = ?",
+      [updateData, productId]
+    );
+
+    if (updatedProduct.affectedRows === 0) {
+      return res.status(404).json({ message: "Product not found" });
     }
-  );
-  // await Product.update(
-  //   {
-  //     name: req.body.name,
-  //     price: req.body.price,
-  //     quantity: req.body.quantity,
-  //     description: req.body.description,
-  //     image_url: req.body.image_url,
-  //   },
-  //   { where: { id: req.params.id } }
-  // ).then(() => {
-  //   res.status(200).json({ message: "Product updated successfully" });
-  // });
+
+    res.status(200).json({ message: "Product updated successfully" });
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 const getProductbyid = (req, res) => {
