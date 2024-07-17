@@ -25,6 +25,9 @@ app.use('/api', router);
 const Product = require('./Routes/Product');
 app.use('/api', Product);
 
+const Cart = require('./Routes/Cart');
+app.use('/api', Cart);
+
 
 app.listen(5000, () => {
   console.log("Server is running on port 5000");

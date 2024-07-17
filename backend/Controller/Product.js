@@ -13,7 +13,7 @@ const AddProduct = async (req, res) => {
   } else {
     const { name, price, description, quantity, AdminId } = req.body;
     const   image_url  = req.file.path;
-    console.log("============", image_url)
+
 
     const createdAt = new Date().toISOString().slice(0, 19).replace("T", " ");
     const updatedAt = createdAt;

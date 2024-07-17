@@ -25,9 +25,12 @@ const UserProductlist = () => {
       setTotalProductsCount(res.data.total);
     });
   }, [currentPage]);
-
-
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
+
+  const cartHandler = (id:any) => {
+    console.log("=======Product add to cart=========");
+    console.log(id);
+  };
 
   return (
     <>
@@ -53,6 +56,8 @@ const UserProductlist = () => {
             </tr>
           </thead>
           <tbody>
+          
+          
             {products.map((product: any) => (
               <tr key={product.id} className="bg-white">
                 <td className="border px-4 py-2">{product.name}</td>
@@ -67,8 +72,12 @@ const UserProductlist = () => {
                 </td>
                 <td className="border px-4 py-2">{product.description}</td>
                 <td className="border px-4 py-2">
-                  <button>
-                    {" "}
+                  <button
+                    onClick={() => {
+                      cartHandler(product);
+                    }}
+                  >
+                    {"        "}
                     <IoCart className="text-3xl" />{" "}
                   </button>
                 </td>
@@ -76,6 +85,8 @@ const UserProductlist = () => {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination */}
         <div className="flex justify-center mt-4">
           <button
             disabled={currentPage === 0}
