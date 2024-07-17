@@ -15,6 +15,14 @@ const Cart = sequelize.define("cart", {
     type: DataTypes.INTEGER,
     allowNull: false
   },
+  AdminId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  ProductId:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -34,11 +42,7 @@ const Cart = sequelize.define("cart", {
   image_url: {
     type: DataTypes.STRING,
     allowNull: true,
-  },
-  AdminId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
+  }
 });
 
 sequelize
@@ -46,6 +50,6 @@ sequelize
   .then(() => {
     console.log("Cart table has been created.");
   })
-  .catch((error) => console.log("========================This error occured", error));
+  .catch((error) => console.log("============This error occured", error));
 
 module.exports = Cart;

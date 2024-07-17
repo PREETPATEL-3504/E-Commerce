@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import AdminDashboard from "./components/adminDashboard";
 import UserDashboard from "./components/userDashboard";
 import AddProducts from "./components/addProducts";
+import Cart from "./components/cart";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -65,6 +66,11 @@ function App() {
           <Route
             path="/add-product/:id"
             element={isLoggedIn ? <AddProducts /> : <Navigate to="/" />}
+          />
+
+          <Route
+            path="/cart"
+            element={isLoggedIn ? <Cart /> : <Navigate to="/" />}
           />
 
           <Route path="/*" element={<Navigate to="/login" />} />

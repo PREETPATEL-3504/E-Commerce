@@ -1,18 +1,20 @@
 import axios from "axios";
 import React, { useEffect } from "react";
-import { getPageCount, paginate } from "../Pagination";
-import ReactPaginate from "react-paginate";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoCart } from "react-icons/io5";
 import { useAppDispatch } from "../Store/Hooks";
 import { setProductList } from "../Store/Reducers/ProduceList";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const UserProductlist = () => {
   const [products, setProducts] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(0);
   const [totalProductsCount, setTotalProductsCount] = React.useState(0);
   const itemsPerPage = 5;
+  const UserId = localStorage.getItem("id");
 
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   dispatch(setProductList(products));
 
@@ -27,24 +29,41 @@ const UserProductlist = () => {
   }, [currentPage]);
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
-  const cartHandler = (id:any) => {
-    console.log("=======Product add to cart=========");
-    console.log(id);
+  const cartHandler = (item: any) => {
+    console.log(item);
+    try {
+      const url = `http://localhost:5000/api/cart?UserId=${UserId}`;
+      axios.post(url, item).then((res) => {
+        toast.success("Add to cart successfully",{
+          autoClose: 1000,
+        })
+      });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Error adding to cart",{
+        autoClose: 1000,
+      })
+    }
   };
 
   return (
     <>
       <div className="container mx-auto p-4">
-        <div className="flex items-end mb-4">
+        <div className="flex items-center mb-4">
           <h1 className="text-2xl text-white text-center font-bold  ">
             Product List
           </h1>
-          <h4 className="text-white text-center ml-[25%] font-bold">
-            Your Cart
-          </h4>
+          <button className="ml-[85%]"
+            onClick={() => {
+              navigate("/cart");
+            }}
+          >
+            {" "}
+            <IoCart className="text-3xl text-white text-center ml-[5%]" />{" "}
+          </button>
         </div>
 
-        <table className="min-w-full border border-gray-300">
+        <table className="min-w-full border-separate border-spacing-0.5  border border-slate-500 border ">
           <thead>
             <tr className="bg-gray-100">
               <th className="border px-4 py-2">Name</th>
@@ -56,8 +75,6 @@ const UserProductlist = () => {
             </tr>
           </thead>
           <tbody>
-          
-          
             {products.map((product: any) => (
               <tr key={product.id} className="bg-white">
                 <td className="border px-4 py-2">{product.name}</td>
@@ -77,8 +94,7 @@ const UserProductlist = () => {
                       cartHandler(product);
                     }}
                   >
-                    {"        "}
-                    <IoCart className="text-3xl" />{" "}
+                    <span className="font-bold">Add to Cart</span>
                   </button>
                 </td>
               </tr>
