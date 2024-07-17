@@ -55,13 +55,14 @@ const AddProduct = async (req, res) => {
 const GetProduct = async (req, res) => {
   const offset = parseInt(req.query.offset) || 0;
   const limit = parseInt(req.query.limit) || 10;
+  const AdminId = parseInt(req.query.AdminId) || 1;
 
   try {
     const [result, totalResult] = await Promise.all([
       new Promise((resolve, reject) => {
         con.query(
-          `SELECT * FROM Products LIMIT ? OFFSET ?`,
-          [limit, offset],
+          `SELECT * FROM Products WHERE AdminId = ? LIMIT ? OFFSET ?`,
+          [AdminId, limit, offset ],
           (error, rows) => {
             if (error) reject(error);
             else resolve(rows);

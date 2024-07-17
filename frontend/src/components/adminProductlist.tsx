@@ -10,6 +10,7 @@ const AdminProductlist = () => {
   const [products, setProducts] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(0);
   const [totalProductsCount, setTotalProductsCount] = React.useState(0);
+  const adminid = localStorage.getItem('id');
   const itemsPerPage = 2;
 
   const dispatch = useAppDispatch();
@@ -18,16 +19,16 @@ const AdminProductlist = () => {
   useEffect(() => {
     const url = `http://localhost:5000/api/products?offset=${
       currentPage * itemsPerPage
-    }&limit=${itemsPerPage}`;
+    }&limit=${itemsPerPage}WHERE AdminId=${adminid}`;
     axios.get(url).then((res) => {
+      console.log(res.data.data);
       setProducts(res.data.data);
       setTotalProductsCount(res.data.total);
-      console.log();
     });
   }, [currentPage]);
-  
+
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
-  
+
   //Products Delete Api
   const onDelete = (id: any) => {
     axios
@@ -68,8 +69,8 @@ const AdminProductlist = () => {
               <td className="border px-4 py-2">{product.quantity}</td>
               <td className="border px-4 py-2">
                 <img
-                  src={product.image_url}
-                  alt={product.name}
+                  src={`http://localhost:5000/${product.image_url}`}
+                  alt="image"
                   className="w-16 h-16 object-cover"
                 />
               </td>
