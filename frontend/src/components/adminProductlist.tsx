@@ -17,7 +17,7 @@ const AdminProductlist = () => {
   dispatch(setProductList(products));
 
   useEffect(() => {
-    const url = `http://localhost:5000/api/products?offset=${
+    const url = `http://localhost:5000/product/products?offset=${
       currentPage * itemsPerPage
     }&limit=${itemsPerPage}&AdminId=${adminid}`;
     axios.get(url).then((res) => {
@@ -32,7 +32,7 @@ const AdminProductlist = () => {
   //Products Delete Api
   const onDelete = (id: any) => {
     axios
-      .delete(`http://localhost:5000/api/products/${id}`)
+      .delete(`http://localhost:5000/product/products/${id}`)
       .then(() => {
         setProducts(products.filter((p: any) => p.id !== id));
         toast.success("Product deleted", {

@@ -9,15 +9,10 @@ const Cart = () => {
   const [cartProduct, setCartProduct] = useState([""]);
   const UserId = localStorage.getItem("id");
 
-  useEffect(() => {
-    const url = `http://localhost:5000/api/cart?UserId=${UserId}`;
-    axios.get(url).then((res) => {
-      setCartProduct(res.data.data);
-    });
-  }, []);
+
   const onDelete = (product: any) => {
     const id = product.id;
-    const url = `http://localhost:5000/api/cart/${id}`;
+    const url = `http://localhost:5000/cart/cart/${id}`;
     axios.delete(url).then((res) => {
       toast.success("item remove successfully", {
         autoClose: 1000,
@@ -29,7 +24,7 @@ const Cart = () => {
   const addHandler = (item: any) => {
     const id = item["ProductId"];
     try {
-      const url = `http://localhost:5000/api/cart/add/${id}?UserId=${UserId}`;
+      const url = `http://localhost:5000/cart/cart/add/${id}?UserId=${UserId}`;
       axios
         .put(url, { quantity: item.quantity + 1 })
         .then((res) => {
@@ -43,8 +38,8 @@ const Cart = () => {
             autoClose: 1000,
           });
         });
-    } catch (error) {
-      console.error("Error adding to cart:", error);
+    } catch (err) {
+      console.error("Error adding to cart:", err);
       toast.error("Error adding to cart", {
         autoClose: 1000,
       });
@@ -54,7 +49,7 @@ const Cart = () => {
   const removeHandler = (item: any) => {
     const id = item["ProductId"];
     try {
-      const url = `http://localhost:5000/api/cart/remove/${id}?UserId=${UserId}`;
+      const url = `http://localhost:5000/cart/cart/remove/${id}?UserId=${UserId}`;
       axios
         .put(url, { quantity: item.quantity + 1 })
         .then((res) => {
@@ -75,6 +70,13 @@ const Cart = () => {
       });
     }
   };
+
+  useEffect(() => {
+    const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
+    axios.get(url).then((res) => {
+      setCartProduct(res.data.data);
+    });
+  }, [addHandler, removeHandler]);
 
   return (
     <>

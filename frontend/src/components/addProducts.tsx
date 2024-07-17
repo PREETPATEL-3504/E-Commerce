@@ -17,7 +17,7 @@ const AddProducts = () => {
 
   useEffect(() => {
     const fetchdata = async () => {
-      const url = `http://localhost:5000/api/products/${id}`;
+      const url = `http://localhost:5000/product/products/${id}`;
       const res = await axios.get(url);
       setData(res.data);
     };
@@ -41,7 +41,7 @@ const AddProducts = () => {
     e.preventDefault();
     if (id) {
       try {
-        const url = `http://localhost:5000/api/products/${id}`;
+        const url = `http://localhost:5000/product/products/${id}`;
         const res = await axios.patch(url, data);
         if (res.status === 200) {
           toast.success("Product Updated Successfully", {
@@ -62,7 +62,7 @@ const AddProducts = () => {
         formdata.append("image_url", data.image_url);
         formdata.append("AdminId", String(AdminId));
 
-        const url = "http://localhost:5000/api/products";
+        const url = "http://localhost:5000/product/products";
         const res = await axios.post(url, formdata);
         if (res.status === 200) {
           toast.success("Product Added Successfully", {

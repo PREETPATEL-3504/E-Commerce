@@ -18,9 +18,9 @@ const UserProductlist = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   dispatch(setProductList(products));
-
+  
   useEffect(() => {
-    const url = `http://localhost:5000/api/products?offset=${
+    const url = `http://localhost:5000/product/products?offset=${
       currentPage * itemsPerPage
     }&limit=${itemsPerPage}`;
     axios.get(url).then((res) => {
@@ -32,7 +32,7 @@ const UserProductlist = () => {
 
   const cartHandler = (item: any) => {
     try {
-      const url = `http://localhost:5000/api/cart?UserId=${UserId}`;
+      const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
       axios.post(url, item).then((res) => {
         toast.success("Add to cart successfully",{
           autoClose: 1000,
@@ -47,13 +47,11 @@ const UserProductlist = () => {
   };
 
   useEffect(()=>{
-    const url = `http://localhost:5000/api/cart/count?UserId=${UserId}`;
+    const url = `http://localhost:5000/cart/cart/count?UserId=${UserId}`;
     axios.get(url).then((res) => {
       setItemCount(res.data.data);
     });
-  },[]);
-
- 
+  },[cartHandler]);
 
   return (
     <>

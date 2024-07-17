@@ -19,14 +19,8 @@ app.use(cors(corsOption))
 app.use('/images', express.static(path.join(__dirname, 'Images')));
 
 // Routes
-const router = require("./Routes/User");
-app.use('/api', router);
-
-const Product = require('./Routes/Product');
-app.use('/api', Product);
-
-const Cart = require('./Routes/Cart');
-app.use('/api', Cart);
+const router = require("./Routes/index");
+app.use('/', router);
 
 
 app.listen(5000, () => {

@@ -19,7 +19,7 @@ const Login = ({ setIsLoggedIn }: any) => {
     e.preventDefault();
 
     try {
-      const url = "http://localhost:5000/api/user-login";
+      const url = "http://localhost:5000/user/user-login";
       const res = await axios.post(url, data);
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
