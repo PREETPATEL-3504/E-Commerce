@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoCart } from "react-icons/io5";
 import { useAppDispatch } from "../Store/Hooks";
@@ -11,6 +11,7 @@ const UserProductlist = () => {
   const [products, setProducts] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(0);
   const [totalProductsCount, setTotalProductsCount] = React.useState(0);
+  const [itemCount, setItemCount ] = useState(0)
   const itemsPerPage = 5;
   const UserId = localStorage.getItem("id");
 
@@ -30,7 +31,6 @@ const UserProductlist = () => {
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
   const cartHandler = (item: any) => {
-    console.log(item);
     try {
       const url = `http://localhost:5000/api/cart?UserId=${UserId}`;
       axios.post(url, item).then((res) => {
@@ -46,6 +46,15 @@ const UserProductlist = () => {
     }
   };
 
+  useEffect(()=>{
+    const url = `http://localhost:5000/api/cart/count?UserId=${UserId}`;
+    axios.get(url).then((res) => {
+      setItemCount(res.data.data);
+    });
+  },[]);
+
+ 
+
   return (
     <>
       <div className="container mx-auto p-4">
@@ -53,14 +62,16 @@ const UserProductlist = () => {
           <h1 className="text-2xl text-white text-center font-bold  ">
             Product List
           </h1>
-          <button className="ml-[85%]"
+
+          <button className="ml-[85%] flex" 
             onClick={() => {
               navigate("/cart");
             }}
           >
-            {" "}
+            <span className="text-white">{itemCount}</span>
             <IoCart className="text-3xl text-white text-center ml-[5%]" />{" "}
           </button>
+            
         </div>
 
         <table className="min-w-full border-separate border-spacing-0.5  border border-slate-500 border ">

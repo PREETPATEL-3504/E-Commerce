@@ -2,10 +2,13 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { TiPlus } from "react-icons/ti";
+import { TiMinus } from "react-icons/ti";
 
 const Cart = () => {
   const [cartProduct, setCartProduct] = useState([""]);
   const UserId = localStorage.getItem("id");
+
   useEffect(() => {
     const url = `http://localhost:5000/api/cart?UserId=${UserId}`;
     axios.get(url).then((res) => {
@@ -22,6 +25,57 @@ const Cart = () => {
       setCartProduct(cartProduct.filter((p: any) => p.id !== product.id));
     });
   };
+
+  const addHandler = (item: any) => {
+    const id = item["ProductId"];
+    try {
+      const url = `http://localhost:5000/api/cart/add/${id}?UserId=${UserId}`;
+      axios
+        .put(url, { quantity: item.quantity + 1 })
+        .then((res) => {
+          toast.success("Quantity increased successfully", {
+            autoClose: 1000,
+          });
+        })
+        .catch((err) => {
+          console.error("Error adding to cart:", err);
+          toast.error("Error adding to cart", {
+            autoClose: 1000,
+          });
+        });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Error adding to cart", {
+        autoClose: 1000,
+      });
+    }
+  };
+
+  const removeHandler = (item: any) => {
+    const id = item["ProductId"];
+    try {
+      const url = `http://localhost:5000/api/cart/remove/${id}?UserId=${UserId}`;
+      axios
+        .put(url, { quantity: item.quantity + 1 })
+        .then((res) => {
+          toast.success("Quantity decrease successfully", {
+            autoClose: 1000,
+          });
+        })
+        .catch((err) => {
+          console.error("Error adding to cart:", err);
+          toast.error("Error adding to cart", {
+            autoClose: 1000,
+          });
+        });
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+      toast.error("Error adding to cart", {
+        autoClose: 1000,
+      });
+    }
+  };
+
   return (
     <>
       {cartProduct.length !== 0 ? (
@@ -41,14 +95,30 @@ const Cart = () => {
               </h2>
               <p className="text-gray-600">ID: {product.productId}</p>
               <p className="text-gray-700 mt-1">Price: {product.price}</p>
-              <p className="text-gray-700 mt-1">Quantity: {product.quantity}</p>
+
+              <p className="text-gray-700 mt-1 flex gap-2 items-center">
+                Quantity:{" "}
+                <button
+                  onClick={() => {
+                    removeHandler(product);
+                  }}
+                >
+                  <TiMinus />
+                </button>
+                {product.quantity}
+                <button
+                  onClick={() => {
+                    addHandler(product);
+                  }}
+                >
+                  <TiPlus />
+                </button>
+              </p>
+
               <p className="text-gray-500 mt-1">{product.description}</p>
             </div>
             <div className="ml-4 flex flex-col items-center">
-              <button
-                //   onClick={() => onBuy(productId)}
-                className="bg-blue-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
-              >
+              <button className="bg-blue-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
                 Buy
               </button>
               <button

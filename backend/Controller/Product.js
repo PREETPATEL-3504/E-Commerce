@@ -2,7 +2,7 @@ const con = require("../db");
 const Product = require("../Model/Product");
 const productValidate = require("../Validation/productValidation");
 
-const AddProduct = async (req, res) => {
+const addProduct = async (req, res) => {
   const { error, value } = productValidate(req.body);
   if (error) {
     res.status(400).json({
@@ -13,7 +13,6 @@ const AddProduct = async (req, res) => {
   } else {
     const { name, price, description, quantity, AdminId } = req.body;
     const   image_url  = req.file.path;
-
 
     const createdAt = new Date().toISOString().slice(0, 19).replace("T", " ");
     const updatedAt = createdAt;
@@ -52,7 +51,7 @@ const AddProduct = async (req, res) => {
   }
 };
 
-const GetProduct = async (req, res) => {
+const getProduct = async (req, res) => {
   const offset = parseInt(req.query.offset) || 0;
   const limit = parseInt(req.query.limit) || 10;
   const AdminId = parseInt(req.query.AdminId) || null;
@@ -141,8 +140,8 @@ const getProductbyid = (req, res) => {
 };
 
 module.exports = {
-  AddProduct,
-  GetProduct,
+  addProduct,
+  getProduct,
   deleteProduct,
   updateProduct,
   getProductbyid,
