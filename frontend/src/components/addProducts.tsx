@@ -97,7 +97,7 @@ const AddProducts = () => {
               <div className="relative h-11 w-full min-w-[200px]">
                 <input
                   type="text"
-                  pattern="[A-Za-z]{2,}"
+                  minLength={2}
                   required
                   placeholder=""
                   value={data.name}
@@ -112,7 +112,7 @@ const AddProducts = () => {
               <div className="relative h-11 w-full min-w-[200px]">
                 <input
                   type="text"
-                  pattern="[A-Za-z]{2,}"
+                  minLength={2}
                   required
                   placeholder=""
                   value={data.description}
@@ -129,7 +129,7 @@ const AddProducts = () => {
               <div className="relative h-11 w-full min-w-[200px]">
                 <input
                   type="number"
-                  pattern="[A-Za-z]{2,}"
+                  pattern="[0-9]"
                   required
                   placeholder=""
                   value={data.quantity}
@@ -145,8 +145,8 @@ const AddProducts = () => {
 
               <div className="relative h-11 w-full min-w-[200px]">
                 <input
-                  type="text"
-                  pattern="[0-9]{2,}"
+                  type="number"
+                  pattern="[0-9]"
                   required
                   placeholder=""
                   value={data.price}
@@ -162,7 +162,7 @@ const AddProducts = () => {
                 {id ? (
                   <input
                     type="file"
-                    accept="image/png, image/svg, image/jpeg"
+                    accept="image/png, image/svg,image/jpg, image/jpeg"
                     onChange={(e) => {
                       if (e.target.files && e.target.files.length > 0) {
                         setData({
@@ -176,7 +176,7 @@ const AddProducts = () => {
                 ) : (
                   <input
                     type="file"
-                    accept="image/png, image/svg, image/jpeg"
+                    accept="image/png, image/svg,image/jpg, image/jpeg"
                     required
                     onChange={(e) => {
                       if (e.target.files && e.target.files.length > 0) {

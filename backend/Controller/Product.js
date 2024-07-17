@@ -55,19 +55,20 @@ const AddProduct = async (req, res) => {
 const GetProduct = async (req, res) => {
   const offset = parseInt(req.query.offset) || 0;
   const limit = parseInt(req.query.limit) || 10;
-  const AdminId = parseInt(req.query.AdminId) || 1;
+  const AdminId = parseInt(req.query.AdminId) || null;
 
   try {
     const [result, totalResult] = await Promise.all([
       new Promise((resolve, reject) => {
-        con.query(
-          `SELECT * FROM Products WHERE AdminId = ? LIMIT ? OFFSET ?`,
-          [AdminId, limit, offset ],
-          (error, rows) => {
-            if (error) reject(error);
-            else resolve(rows);
-          }
-        );
+
+        const query = AdminId !== null
+          ? `SELECT * FROM Products WHERE AdminId = ? LIMIT ? OFFSET ?`
+          : `SELECT * FROM Products LIMIT ? OFFSET ?`;
+
+        con.query(query, AdminId !== null ? [AdminId, limit, offset] : [limit, offset], (error, rows) => {
+          if (error) reject(error);
+          else resolve(rows);
+        });
       }),
       new Promise((resolve, reject) => {
         con.query(`SELECT COUNT(*) AS total FROM Products`, (error, result) => {

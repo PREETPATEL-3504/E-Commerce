@@ -11,7 +11,7 @@ const UserProductlist = () => {
   const [products, setProducts] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(0);
   const [totalProductsCount, setTotalProductsCount] = React.useState(0);
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
 
   const dispatch = useAppDispatch();
   dispatch(setProductList(products));
@@ -60,7 +60,7 @@ const UserProductlist = () => {
                 <td className="border px-4 py-2">{product.quantity}</td>
                 <td className="border px-4 py-2">
                   <img
-                    src={product.image_url}
+                    src={`http://localhost:5000/${product.image_url}`}
                     alt={product.name}
                     className="w-16 h-16 object-cover"
                   />

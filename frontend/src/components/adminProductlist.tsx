@@ -11,7 +11,7 @@ const AdminProductlist = () => {
   const [currentPage, setCurrentPage] = React.useState(0);
   const [totalProductsCount, setTotalProductsCount] = React.useState(0);
   const adminid = localStorage.getItem('id');
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
 
   const dispatch = useAppDispatch();
   dispatch(setProductList(products));
@@ -19,7 +19,7 @@ const AdminProductlist = () => {
   useEffect(() => {
     const url = `http://localhost:5000/api/products?offset=${
       currentPage * itemsPerPage
-    }&limit=${itemsPerPage}WHERE AdminId=${adminid}`;
+    }&limit=${itemsPerPage}&AdminId=${adminid}`;
     axios.get(url).then((res) => {
       console.log(res.data.data);
       setProducts(res.data.data);
