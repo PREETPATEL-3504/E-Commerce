@@ -7,6 +7,8 @@ import { TiMinus } from "react-icons/ti";
 
 const Cart = () => {
   const [cartProduct, setCartProduct] = useState([]);
+  const [count, setCount] = useState(0);
+
   const UserId = localStorage.getItem("id");
 
   const onDelete = (product: any) => {
@@ -70,10 +72,17 @@ const Cart = () => {
     }
   };
 
+  useEffect(() => {}, [onDelete, addHandler, removeHandler]);
+
   useEffect(() => {
     const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
     axios.get(url).then((res) => {
       setCartProduct(res.data.data);
+      const total = res.data.data.reduce(
+        (acc: any, product: any) => acc + product.price * product.quantity,
+        0
+      );
+      setCount(total);
     });
   }, [addHandler, removeHandler]);
 
@@ -111,7 +120,9 @@ const Cart = () => {
                 {product.quantity}
                 <button
                   disabled={product.quantity == 10}
-                  className={product.quantity === 10 ? "cursor-not-allowed" : ""}
+                  className={
+                    product.quantity === 10 ? "cursor-not-allowed" : ""
+                  }
                   onClick={() => {
                     addHandler(product);
                   }}
@@ -122,6 +133,7 @@ const Cart = () => {
 
               <p className="text-gray-500 mt-1">{product.description}</p>
             </div>
+
             <div className="ml-4 flex flex-col items-center">
               <button className="bg-blue-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
                 Buy
@@ -132,6 +144,10 @@ const Cart = () => {
               >
                 Delete
               </button>
+              <div className="mt-2">
+                <span className="font-bold">Total:</span>
+                <span className="ml-1">{product.quantity * product.price}</span>
+              </div>
             </div>
           </div>
         ))
@@ -140,7 +156,10 @@ const Cart = () => {
           <h1 className="text-5xl text-white">Your cart is empty</h1>
         </div>
       )}
-      <button className="bg-white p-4 m-4 rouded-xl">
+      <div className="font-bold text-black ml-4 bg-white rounded-lg p-2 mr-4 text-end">
+        <span className="p-2">Total: {count}</span>
+      </div>
+      <button className="bg-white p-4 m-4 rouded-xl rounded-lg">
         <Link to="/user">Continue Shopping</Link>
       </button>
     </>

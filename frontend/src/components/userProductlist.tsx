@@ -161,7 +161,7 @@ const UserProductlist = () => {
               setCurrentPage(currentPage + 1);
               setOffset(offset + 1);
             }}
-            className="bg-gray-300  text-gray-700 px-2 py-1 rounded hover:bg-gray-400"
+            className="bg-gray-300 text-gray-700 px-2 py-1 rounded hover:bg-gray-400"
           >
             <FaChevronRight />
           </button>
