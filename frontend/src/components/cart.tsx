@@ -9,7 +9,6 @@ const Cart = () => {
   const [cartProduct, setCartProduct] = useState([]);
   const UserId = localStorage.getItem("id");
 
-
   const onDelete = (product: any) => {
     const id = product.id;
     const url = `http://localhost:5000/cart/cart/${id}`;
@@ -101,6 +100,8 @@ const Cart = () => {
               <p className="text-gray-700 mt-1 flex gap-2 items-center">
                 Quantity:{" "}
                 <button
+                  disabled={product.quantity == 1}
+                  className={product.quantity === 1 ? "cursor-not-allowed" : ""}
                   onClick={() => {
                     removeHandler(product);
                   }}
@@ -109,6 +110,8 @@ const Cart = () => {
                 </button>
                 {product.quantity}
                 <button
+                  disabled={product.quantity == 10}
+                  className={product.quantity === 10 ? "cursor-not-allowed" : ""}
                   onClick={() => {
                     addHandler(product);
                   }}
