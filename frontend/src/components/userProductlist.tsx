@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoCart } from "react-icons/io5";
 import { useAppDispatch } from "../Store/Hooks";
@@ -8,17 +8,18 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const UserProductlist = () => {
-  const [products, setProducts] = React.useState([]);
-  const [currentPage, setCurrentPage] = React.useState(0);
-  const [totalProductsCount, setTotalProductsCount] = React.useState(0);
-  const [itemCount, setItemCount ] = useState(0)
+  const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalProductsCount, setTotalProductsCount] = useState(0);
+  const [productId, setProductId] = useState<any>([]);
+  const [itemCount, setItemCount] = useState(0);
   const itemsPerPage = 5;
   const UserId = localStorage.getItem("id");
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   dispatch(setProductList(products));
-  
+
   useEffect(() => {
     const url = `http://localhost:5000/product/products?offset=${
       currentPage * itemsPerPage
@@ -34,24 +35,34 @@ const UserProductlist = () => {
     try {
       const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
       axios.post(url, item).then((res) => {
-        toast.success("Add to cart successfully",{
+        toast.success("Add to cart successfully", {
           autoClose: 1000,
-        })
+        });
       });
     } catch (error) {
       console.error("Error adding to cart:", error);
-      toast.error("Error adding to cart",{
+      toast.error("Error adding to cart", {
         autoClose: 1000,
-      })
+      });
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
+    const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
+    axios.get(url).then((res) => {
+      const p_id = res.data.data;
+      for (let i = 0; i < p_id.length; i++) {
+        productId.push(...productId, res.data.data[i].ProductId);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     const url = `http://localhost:5000/cart/cart/count?UserId=${UserId}`;
     axios.get(url).then((res) => {
       setItemCount(res.data.data);
     });
-  },[cartHandler]);
+  }, []);
 
   return (
     <>
@@ -61,7 +72,8 @@ const UserProductlist = () => {
             Product List
           </h1>
 
-          <button className="ml-[85%] flex" 
+          <button
+            className="ml-[85%] flex"
             onClick={() => {
               navigate("/cart");
             }}
@@ -69,7 +81,6 @@ const UserProductlist = () => {
             <span className="text-white">{itemCount}</span>
             <IoCart className="text-3xl text-white text-center ml-[5%]" />{" "}
           </button>
-            
         </div>
 
         <table className="min-w-full border-separate border-spacing-0.5  border border-slate-500 border ">
@@ -98,13 +109,26 @@ const UserProductlist = () => {
                 </td>
                 <td className="border px-4 py-2">{product.description}</td>
                 <td className="border px-4 py-2">
-                  <button
-                    onClick={() => {
-                      cartHandler(product);
-                    }}
-                  >
-                    <span className="font-bold">Add to Cart</span>
-                  </button>
+                  {productId.includes(product.id) ? (
+                    <button
+                      disabled
+                      className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700 cursor-not-allowed"
+                      onClick={() => {
+                        cartHandler(product);
+                      }}
+                    >
+                      <span className="font-bold">Add to Cart</span>
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700"
+                      onClick={() => {
+                        cartHandler(product);
+                      }}
+                    >
+                      <span className="font-bold">Add to Cart</span>
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

@@ -6,7 +6,7 @@ import { TiPlus } from "react-icons/ti";
 import { TiMinus } from "react-icons/ti";
 
 const Cart = () => {
-  const [cartProduct, setCartProduct] = useState([""]);
+  const [cartProduct, setCartProduct] = useState([]);
   const UserId = localStorage.getItem("id");
 
 

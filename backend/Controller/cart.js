@@ -192,4 +192,11 @@ const countItem = async (req, res) => {
   }
 };
 
-module.exports = { addToCart, getCart, deleteItem, countItem, addQuantityToCart, minusQuantityToCart };
+module.exports = {
+  addToCart,
+  getCart,
+  deleteItem,
+  countItem,
+  addQuantityToCart,
+  minusQuantityToCart,
+};
