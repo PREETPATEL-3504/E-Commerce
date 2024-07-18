@@ -9,11 +9,13 @@ import { toast } from "react-toastify";
 
 const UserProductlist = () => {
   const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [offset, setOffset] = useState(0);
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [productId, setProductId] = useState<any>([]);
+  const [itemAdd, setItemAdd] = useState(true);
   const [itemCount, setItemCount] = useState(0);
-  const itemsPerPage = 5;
+  const itemsPerPage = 3;
   const UserId = localStorage.getItem("id");
 
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const UserProductlist = () => {
 
   useEffect(() => {
     const url = `http://localhost:5000/product/products?offset=${
-      currentPage * itemsPerPage
+      offset * itemsPerPage
     }&limit=${itemsPerPage}`;
     axios.get(url).then((res) => {
       setProducts(res.data.data);
@@ -38,6 +40,7 @@ const UserProductlist = () => {
         toast.success("Add to cart successfully", {
           autoClose: 1000,
         });
+        setItemAdd(!itemAdd);
       });
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -55,14 +58,14 @@ const UserProductlist = () => {
         productId.push(...productId, res.data.data[i].ProductId);
       }
     });
-  }, []);
+  }, [itemAdd]);
 
   useEffect(() => {
     const url = `http://localhost:5000/cart/cart/count?UserId=${UserId}`;
     axios.get(url).then((res) => {
       setItemCount(res.data.data);
     });
-  }, []);
+  }, [itemAdd]);
 
   return (
     <>
@@ -138,8 +141,11 @@ const UserProductlist = () => {
         {/* Pagination */}
         <div className="flex justify-center mt-4">
           <button
-            disabled={currentPage === 0}
-            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            onClick={() => {
+              setCurrentPage(currentPage - 1);
+              setOffset(offset - 1);
+            }}
             className="bg-gray-300 text-gray-700 px-2 py-1 rounded mr-2 hover:bg-gray-400"
           >
             <FaChevronLeft />
@@ -150,8 +156,11 @@ const UserProductlist = () => {
           </button>
 
           <button
-            disabled={currentPage === totalPages - 1}
-            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages }
+            onClick={() => {
+              setCurrentPage(currentPage + 1);
+              setOffset(offset + 1);
+            }}
             className="bg-gray-300  text-gray-700 px-2 py-1 rounded hover:bg-gray-400"
           >
             <FaChevronRight />
