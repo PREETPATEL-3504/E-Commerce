@@ -12,7 +12,7 @@ const addProduct = async (req, res) => {
     });
   } else {
     const { name, price, description, quantity, AdminId } = req.body;
-    const   image_url  = req.file.path;
+    const image_url = req.file.path;
 
     const createdAt = new Date().toISOString().slice(0, 19).replace("T", " ");
     const updatedAt = createdAt;
@@ -59,15 +59,19 @@ const getProduct = async (req, res) => {
   try {
     const [result, totalResult] = await Promise.all([
       new Promise((resolve, reject) => {
+        const query =
+          AdminId !== null
+            ? `SELECT * FROM Products WHERE AdminId = ? LIMIT ? OFFSET ?`
+            : `SELECT * FROM Products LIMIT ? OFFSET ?`;
 
-        const query = AdminId !== null
-          ? `SELECT * FROM Products WHERE AdminId = ? LIMIT ? OFFSET ?`
-          : `SELECT * FROM Products LIMIT ? OFFSET ?`;
-
-        con.query(query, AdminId !== null ? [AdminId, limit, offset] : [limit, offset], (error, rows) => {
-          if (error) reject(error);
-          else resolve(rows);
-        });
+        con.query(
+          query,
+          AdminId !== null ? [AdminId, limit, offset] : [limit, offset],
+          (error, rows) => {
+            if (error) reject(error);
+            else resolve(rows);
+          }
+        );
       }),
       new Promise((resolve, reject) => {
         con.query(`SELECT COUNT(*) AS total FROM Products`, (error, result) => {
