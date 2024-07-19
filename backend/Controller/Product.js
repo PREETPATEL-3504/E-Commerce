@@ -62,8 +62,6 @@ const addProduct = async (req, res) => {
 
 const getProduct = async (req, res) => {
 
-  console.log("======================", req.user);
-
   const offset = parseInt(req.query.offset) || 0;
   const limit = parseInt(req.query.limit) || 10;
   const AdminId = parseInt(req.query.AdminId) || null;

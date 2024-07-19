@@ -8,6 +8,7 @@ import { TiMinus } from "react-icons/ti";
 const Cart = () => {
   const [cartProduct, setCartProduct] = useState([]);
   const [count, setCount] = useState(0);
+  const [trigger, setTrigger] = useState(false);
 
   const UserId = localStorage.getItem("id");
 
@@ -18,6 +19,7 @@ const Cart = () => {
       toast.success("item remove successfully", {
         autoClose: 1000,
       });
+      setTrigger(!trigger);
       setCartProduct(cartProduct.filter((p: any) => p.id !== product.id));
     });
   };
@@ -32,6 +34,7 @@ const Cart = () => {
           toast.success("Quantity increased successfully", {
             autoClose: 1000,
           });
+          setTrigger(!trigger);
         })
         .catch((err) => {
           console.error("Error adding to cart:", err);
@@ -57,6 +60,7 @@ const Cart = () => {
           toast.success("Quantity decrease successfully", {
             autoClose: 1000,
           });
+          setTrigger(!trigger);
         })
         .catch((err) => {
           console.error("Error adding to cart:", err);
@@ -72,7 +76,7 @@ const Cart = () => {
     }
   };
 
-  useEffect(() => {}, [onDelete, addHandler, removeHandler]);
+
 
   useEffect(() => {
     const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
@@ -84,7 +88,7 @@ const Cart = () => {
       );
       setCount(total);
     });
-  }, [addHandler, removeHandler]);
+  }, [trigger]);
 
   return (
     <>
