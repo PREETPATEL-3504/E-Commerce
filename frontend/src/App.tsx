@@ -9,8 +9,11 @@ import AdminDashboard from "./components/adminDashboard";
 import UserDashboard from "./components/userDashboard";
 import AddProducts from "./components/addProducts";
 import Cart from "./components/cart";
+import io from "socket.io-client"
 
 function App() {
+
+  const ENDPOINT  = "http://localhost:5000"
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("token") || null
   );
@@ -23,6 +26,16 @@ function App() {
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
+
+
+  const id = localStorage.getItem("id");
+  useEffect(()=>{
+    if(id){
+      const socket = io(ENDPOINT);
+    }
+  },[])
+
+
   return (
     <>
       <BrowserRouter>
