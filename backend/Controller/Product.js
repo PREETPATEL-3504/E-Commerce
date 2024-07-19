@@ -49,7 +49,14 @@ const addProduct = async (req, res) => {
           image_url: image_url,
           AdminId: AdminId,
         };
-        io.emit("product", data);
+        const query = "SELECT * FROM users WHERE socketId IS NOT NULL AND role = 'user'";
+        con.query(query, [], (error, result) => {
+          if (result) {
+            console.log("=================== Only users")
+            io.emit("product", data);
+          }
+        });
+
         res.status(200).json({
           status: 200,
           message: "Product added successfully",
