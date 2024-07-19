@@ -22,7 +22,6 @@ const AdminProductlist = () => {
       offset * itemsPerPage
     }&limit=${itemsPerPage}&AdminId=${adminid}`;
     axios.get(url).then((res) => {
-      console.log(res.data.data);
       setProducts(res.data.data);
       setTotalProductsCount(res.data.total);
     });

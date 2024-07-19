@@ -9,15 +9,16 @@ import AdminDashboard from "./components/adminDashboard";
 import UserDashboard from "./components/userDashboard";
 import AddProducts from "./components/addProducts";
 import Cart from "./components/cart";
-import io from "socket.io-client"
+import io from "socket.io-client";
+import { useAppDispatch } from "./Store/Hooks";
+import { setSocket } from "./Store/Reducers/UserSlice";
 
 function App() {
-
-  const ENDPOINT  = "http://localhost:5000"
+  const ENDPOINT = "http://localhost:5000";
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("token") || null
   );
-
+const dispatch = useAppDispatch();
   useEffect(() => {
     const handleStorageChange = () => {
       setIsLoggedIn(localStorage.getItem("token"));
@@ -27,14 +28,13 @@ function App() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-
   const id = localStorage.getItem("id");
-  useEffect(()=>{
-    if(id){
-      const socket = io(ENDPOINT);
+  useEffect(() => {
+    if (id) {
+      const socket: any = io(ENDPOINT);
+      dispatch(setSocket(socket));
     }
-  },[])
-
+  }, [id]);
 
   return (
     <>

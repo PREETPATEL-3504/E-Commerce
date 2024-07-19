@@ -26,7 +26,7 @@ const register = async (req, res) => {
       })
       .then((user) => {
         const tokendata = {
-          user: req.body.password,
+          user: req.body,
         };
 
         const token = jwt.sign(tokendata, "123");
@@ -62,11 +62,13 @@ const login = async (req, res) => {
             message: "User not found!",
           });
         }
+
         const tokendata = {
-          user: req.body.password,
+          user: user.dataValues,
         };
 
         const token = jwt.sign(tokendata, "123");
+        
         res.status(200).cookie("token", token).json({
           status: 200,
           message: "User logged in successfully",

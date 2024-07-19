@@ -1,6 +1,7 @@
 const con = require("../db");
 const Product = require("../Model/Product");
 const productValidate = require("../Validation/productValidation");
+const { io } = require("../socket");
 
 const addProduct = async (req, res) => {
   const { error, value } = productValidate(req.body);
@@ -40,7 +41,15 @@ const addProduct = async (req, res) => {
           });
           return;
         }
-        console.log("Product added successfully", result);
+        const data = {
+          name: name,
+          price: price,
+          description: description,
+          quantity: quantity,
+          image_url: image_url,
+          AdminId: AdminId
+        }
+        io.emit("product", data);
         res.status(200).json({
           status: 200,
           message: "Product added successfully",
@@ -52,6 +61,9 @@ const addProduct = async (req, res) => {
 };
 
 const getProduct = async (req, res) => {
+
+  console.log("======================", req.user);
+
   const offset = parseInt(req.query.offset) || 0;
   const limit = parseInt(req.query.limit) || 10;
   const AdminId = parseInt(req.query.AdminId) || null;

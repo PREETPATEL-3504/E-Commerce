@@ -2,34 +2,59 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoCart } from "react-icons/io5";
-import { useAppDispatch } from "../Store/Hooks";
+import { useAppDispatch, useAppSelector } from "../Store/Hooks";
 import { setProductList } from "../Store/Reducers/ProduceList";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const UserProductlist = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [productId, setProductId] = useState<any>([]);
   const [itemAdd, setItemAdd] = useState(true);
   const [itemCount, setItemCount] = useState(0);
-  const itemsPerPage = 3;
+  const itemsPerPage = 10;
   const UserId = localStorage.getItem("id");
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  dispatch(setProductList(products));
+  const socket = useAppSelector((store) => store.users.socket);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
+    console.log("socket: ", socket);
+    if (socket) {
+      socket.on("product", (Newproduct: any) => {
+        console.log("Product", Newproduct);
+        setProducts((prevProducts:any) => [...prevProducts, Newproduct]);
+      });
+    }
+  }, [socket]);
+
+  useEffect(() => {
+    // (async() => {
+    //   const data = (offset, itemsPerPage);
+    //   dispatch(setProductList(data));
+    //   setProducts(data.data);
+    //   setTotalProductsCount(data.total);
+    // })
+
     const url = `http://localhost:5000/product/products?offset=${
       offset * itemsPerPage
     }&limit=${itemsPerPage}`;
-    axios.get(url).then((res) => {
-      setProducts(res.data.data);
-      setTotalProductsCount(res.data.total);
-    });
+    axios
+      .get(url, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((res) => {
+        dispatch(setProductList(res));
+        setProducts(res.data.data);
+        setTotalProductsCount(res.data.total);
+      });
   }, [currentPage]);
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
@@ -156,7 +181,7 @@ const UserProductlist = () => {
           </button>
 
           <button
-            disabled={currentPage === totalPages }
+            disabled={currentPage === totalPages}
             onClick={() => {
               setCurrentPage(currentPage + 1);
               setOffset(offset + 1);
