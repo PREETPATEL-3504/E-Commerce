@@ -8,23 +8,30 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const AdminProductlist = () => {
   const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1    );
+  const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const [totalProductsCount, setTotalProductsCount] = useState(0);
-  const adminid = localStorage.getItem('id');
+  const adminid = localStorage.getItem("id");
   const itemsPerPage = 5;
 
   const dispatch = useAppDispatch();
   dispatch(setProductList(products));
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const url = `http://localhost:5000/product/products?offset=${
       offset * itemsPerPage
     }&limit=${itemsPerPage}&AdminId=${adminid}`;
-    axios.get(url).then((res) => {
-      setProducts(res.data.data);
-      setTotalProductsCount(res.data.total);
-    });
+    axios
+      .get(url, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((res) => {
+        setProducts(res.data.data);
+        setTotalProductsCount(res.data.total);
+      });
   }, [offset]);
 
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
@@ -32,7 +39,9 @@ const AdminProductlist = () => {
   //Products Delete Api
   const onDelete = (id: any) => {
     axios
-      .delete(`http://localhost:5000/product/products/${id}`)
+      .delete(`http://localhost:5000/product/products/${id}`, {
+        headers: { Authorization: token },
+      })
       .then(() => {
         setProducts(products.filter((p: any) => p.id !== id));
         toast.success("Product deleted", {
@@ -92,32 +101,32 @@ const AdminProductlist = () => {
       </table>
 
       <div className="flex justify-center mt-4">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => {
-              setCurrentPage(currentPage - 1);
-              setOffset(offset - 1);
-            }}
-            className="bg-gray-300 text-gray-700 px-2 py-1 rounded mr-2 hover:bg-gray-400"
-          >
-            <FaChevronLeft />
-          </button>
+        <button
+          disabled={currentPage === 1}
+          onClick={() => {
+            setCurrentPage(currentPage - 1);
+            setOffset(offset - 1);
+          }}
+          className="bg-gray-300 text-gray-700 px-2 py-1 rounded mr-2 hover:bg-gray-400"
+        >
+          <FaChevronLeft />
+        </button>
 
-          <button className="px-2 py-1 rounded mr-2  bg-blue-500 text-white">
-            {currentPage}
-          </button>
+        <button className="px-2 py-1 rounded mr-2  bg-blue-500 text-white">
+          {currentPage}
+        </button>
 
-          <button
-            disabled={currentPage === totalPages }
-            onClick={() => {
-              setCurrentPage(currentPage + 1);
-              setOffset(offset + 1);
-            }}
-            className="bg-gray-300 text-gray-700 px-2 py-1 rounded hover:bg-gray-400"
-          >
-            <FaChevronRight />
-          </button>
-        </div>
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => {
+            setCurrentPage(currentPage + 1);
+            setOffset(offset + 1);
+          }}
+          className="bg-gray-300 text-gray-700 px-2 py-1 rounded hover:bg-gray-400"
+        >
+          <FaChevronRight />
+        </button>
+      </div>
     </div>
   );
 };

@@ -27,7 +27,6 @@ const UserProductlist = () => {
     console.log("socket: ", socket);
     if (socket) {
       socket.on("product", (Newproduct: any) => {
-        console.log("Product", Newproduct);
         setProducts((prevProducts:any) => [...prevProducts, Newproduct]);
       });
     }

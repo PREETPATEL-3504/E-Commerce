@@ -44,7 +44,7 @@ const Login = ({ setIsLoggedIn }: any) => {
         alert("Error Loging user");
       }
     } catch (error) {
-      console.log("======LOGIN ERROR=====", error);
+      return error
     }
   };
 
