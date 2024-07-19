@@ -71,9 +71,6 @@ const login = async (req, res) => {
           con.query(query, [socket.id, req.body.email], function (err, result) {
             if (err) throw err;
             console.log("New user connected: ", socket.id);
-            socket.on("disconnect", () => {
-              console.log("User disconnected: ", socket.id);
-            });
           });
         });
 
@@ -93,7 +90,21 @@ const login = async (req, res) => {
   }
 };
 
+const logout = async (req, res) =>{
+  const query = "UPDATE users SET socketId = ? WHERE email = ?";
+  io.on("connection", (socket) => {
+    con.query(query, [socket.id, req.body.email], function (err, result) {
+      if (err) throw err;
+      console.log("New user connected: ", socket.id);
+      socket.on("disconnect", () => {
+        console.log("User disconnected: ", socket.id);
+      });
+    });
+  });
+}
+
 module.exports = {
   register,
   login,
+  logout
 };

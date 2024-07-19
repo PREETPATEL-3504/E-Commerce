@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAppSelector } from "../Store/Hooks";
 
-const Navbar = ({setIsLoggedIn}: any) => {
-
+const Navbar = ({ setIsLoggedIn }: any) => {
+  const socket = useAppSelector((store) => store.users.socket);
   const navigate = useNavigate();
+
   const logOutHnadler = () => {
     setIsLoggedIn(false);
-    toast("logged out successfully",{
-      autoClose: 1000,
-    });
+
+    if (socket) {
+      socket.disconnect();
+    }
+
+    toast("logged out successfully", { autoClose: 1000 });
     navigate("/login");
     localStorage.clear();
   };
@@ -32,7 +37,11 @@ const Navbar = ({setIsLoggedIn}: any) => {
               </Link>
             </li>
             <li>
-              <Link to="/login" onClick={logOutHnadler} className="hover:text-gray-400">
+              <Link
+                to="/login"
+                onClick={logOutHnadler}
+                className="hover:text-gray-400"
+              >
                 Logout
               </Link>
             </li>

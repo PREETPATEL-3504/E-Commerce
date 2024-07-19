@@ -15,10 +15,10 @@ import { setSocket } from "./Store/Reducers/UserSlice";
 
 function App() {
   const ENDPOINT = "http://localhost:5000";
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem("token") || null
-  );
-const dispatch = useAppDispatch();
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("token") || null);
+  const dispatch = useAppDispatch();
+
+  
   useEffect(() => {
     const handleStorageChange = () => {
       setIsLoggedIn(localStorage.getItem("token"));
