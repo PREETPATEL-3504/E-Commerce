@@ -5,6 +5,10 @@ const {
   LoginValidation,
 } = require("../Validation/userValidation");
 
+const { io } = require("../socket");
+
+const con = require("../db");
+
 const register = async (req, res) => {
   const { error, value } = userValidation(req.body);
 
@@ -62,13 +66,23 @@ const login = async (req, res) => {
             message: "User not found!",
           });
         }
+        const query = "UPDATE users SET socketId = ? WHERE email = ?";
+        io.on("connection", (socket) => {
+          con.query(query, [socket.id, req.body.email], function (err, result) {
+            if (err) throw err;
+            console.log("New user connected: ", socket.id);
+            socket.on("disconnect", () => {
+              console.log("User disconnected: ", socket.id);
+            });
+          });
+        });
 
         const tokendata = {
           user: user.dataValues,
         };
 
         const token = jwt.sign(tokendata, "123");
-        
+
         res.status(200).cookie("token", token).json({
           status: 200,
           message: "User logged in successfully",

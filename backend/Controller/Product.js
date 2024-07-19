@@ -47,8 +47,8 @@ const addProduct = async (req, res) => {
           description: description,
           quantity: quantity,
           image_url: image_url,
-          AdminId: AdminId
-        }
+          AdminId: AdminId,
+        };
         io.emit("product", data);
         res.status(200).json({
           status: 200,
@@ -61,7 +61,6 @@ const addProduct = async (req, res) => {
 };
 
 const getProduct = async (req, res) => {
-
   const offset = parseInt(req.query.offset) || 0;
   const limit = parseInt(req.query.limit) || 10;
   const AdminId = parseInt(req.query.AdminId) || null;
