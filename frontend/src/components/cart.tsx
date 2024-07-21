@@ -76,8 +76,15 @@ const Cart = () => {
     }
   };
 
-
-
+  const onBuy = (item: any) => {
+    const url = `http://localhost:5000/cart/cart/checkout?UserId=${UserId}`;
+    axios.post(url).then((res) => {
+      toast.success("Order placed successfully", {
+        autoClose: 1000,
+      });
+      window.location.href = "/";
+    });
+  }
   useEffect(() => {
     const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
     axios.get(url).then((res) => {
@@ -107,7 +114,7 @@ const Cart = () => {
               <h2 className="text-lg font-semibold text-gray-900">
                 {product.name}
               </h2>
-              <p className="text-gray-600">ID: {product.productId}</p>
+              <p className="text-gray-600">ID: {product.ProductId}</p>
               <p className="text-gray-700 mt-1">Price: {product.price}</p>
 
               <p className="text-gray-700 mt-1 flex gap-2 items-center">
@@ -139,7 +146,9 @@ const Cart = () => {
             </div>
 
             <div className="ml-4 flex flex-col items-center">
-              <button className="bg-blue-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
+              <button 
+              onClick={()=>onBuy(product)}
+              className="bg-blue-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
                 Buy
               </button>
               <button

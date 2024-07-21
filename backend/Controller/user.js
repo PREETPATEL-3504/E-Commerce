@@ -24,6 +24,7 @@ const register = async (req, res) => {
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         number: req.body.number,
+        socketId: req.body.socketId || null,
         role: req.body.role,
         email: req.body.email,
         password: req.body.password,

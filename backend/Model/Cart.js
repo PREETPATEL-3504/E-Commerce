@@ -1,4 +1,3 @@
-const Joi = require("joi");
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = new Sequelize("E-commerce", "root", "root", {
   host: "localhost",

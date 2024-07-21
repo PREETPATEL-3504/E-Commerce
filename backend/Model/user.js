@@ -19,6 +19,10 @@ const user = sequelize.define("user", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  socketId:{
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   number: {
     type: DataTypes.STRING,
     allowNull: false,

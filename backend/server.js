@@ -10,7 +10,7 @@ const corsOption = {
   credentials: true,
 };
 
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(cors(corsOption));
 
 //Image fetching
