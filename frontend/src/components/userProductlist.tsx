@@ -24,7 +24,6 @@ const UserProductlist = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    console.log("socket: ", socket);
     if (socket) {
       socket.on("product", (Newproduct: any) => {
         setProducts((prevProducts: any) => [...prevProducts, Newproduct]);
@@ -33,13 +32,29 @@ const UserProductlist = () => {
   }, [socket]);
 
   useEffect(() => {
-    // (async() => {
-    //   const data = (offset, itemsPerPage);
-    //   dispatch(setProductList(data));
-    //   setProducts(data.data);
-    //   setTotalProductsCount(data.total);
-    // })
+    if (socket) {
+      socket.on("delete", (updatedProduct: any) => {
+        console.log("Deleted product received:", updatedProduct);
+        const data = products.filter(
+          (product: any) => product.id != updatedProduct
+        );
+        setProducts(data);
+      });
+    }
+  }, [products]);
 
+  useEffect(() => {
+    if (socket) {
+      socket.on("update", (updatedProduct: any) => {
+        const data = products.map((product: any) =>
+          product.id == updatedProduct.id ? updatedProduct : product
+        );
+        setProducts(data);
+      });
+    }
+  }, [socket, products]);
+
+  useEffect(() => {
     const url = `http://localhost:5000/product/products?offset=${
       offset * itemsPerPage
     }&limit=${itemsPerPage}`;
@@ -54,7 +69,7 @@ const UserProductlist = () => {
         setProducts(res.data.data);
         setTotalProductsCount(res.data.total);
       });
-  }, [currentPage]);
+  }, [currentPage, socket]);
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
   const cartHandler = (item: any) => {
@@ -135,7 +150,9 @@ const UserProductlist = () => {
               <tr key={product.id} className="bg-white text-center">
                 <td className="border px-4 py-2">{product.name}</td>
                 <td className="border px-4 py-2 text-end">{product.price} $</td>
-                <td className="border px-4 py-2 text-end">{product.quantity}</td>
+                <td className="border px-4 py-2 text-end">
+                  {product.quantity}
+                </td>
                 <td className="border px-4 py-2 text-center flex justify-center">
                   <img
                     src={`http://localhost:5000/${product.image_url}`}

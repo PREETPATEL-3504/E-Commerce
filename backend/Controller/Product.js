@@ -49,10 +49,10 @@ const addProduct = async (req, res) => {
           image_url: image_url,
           AdminId: AdminId,
         };
-        const query = "SELECT * FROM users WHERE socketId IS NOT NULL AND role = 'user'";
+        const query =
+          "SELECT * FROM users WHERE socketId IS NOT NULL AND role = 'user'";
         con.query(query, [], (error, result) => {
           if (result) {
-            console.log("=================== Only users")
             io.emit("product", data);
           }
         });
@@ -113,6 +113,7 @@ const deleteProduct = async (req, res) => {
     [req.params.id],
     function (error, result) {
       if (error) return res.status(200).json({ error: error });
+      io.emit("delete", req.params.id);
       res.status(200).json({ message: "Product deleted successfully" });
     }
   );
@@ -126,6 +127,7 @@ const updateProduct = async (req, res) => {
     const updatedAt = createdAt;
 
     const updateData = {
+      id: productId,
       name: name,
       price: price,
       description: description,
@@ -134,18 +136,18 @@ const updateProduct = async (req, res) => {
       updatedAt: updatedAt,
     };
 
-    const updatedProduct = await con.query(
+    con.query(
       "UPDATE Products SET ? WHERE id = ?",
-      [updateData, productId]
+      [updateData, productId],
+      (err, result) => {
+        if (err) return res.status(200).json({ error: err });
+        io.emit("update", updateData);
+      }
     );
-
-    if (updatedProduct.affectedRows === 0) {
-      return res.status(404).json({ message: "Product not found" });
-    }
 
     res.status(200).json({ message: "Product updated successfully" });
   } catch (error) {
-    console.error(error); // Log the error for debugging
+    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

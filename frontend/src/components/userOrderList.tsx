@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const UserOrderList = () => {
   const [orders, setOrders] = useState([]);
   const userId = localStorage.getItem("id");
+  const socket = useSelector((store: any) => store.users.socket);
 
   const fetchOrders = async () => {
     try {
@@ -23,6 +25,32 @@ const UserOrderList = () => {
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("orderAccept", (orderId: any) => {
+        console.log("=============", orderId);
+        const updatedOrder: any = orders.find((o: any) => o.id == orderId);
+        console.log("=============", updatedOrder);
+        if (updatedOrder) {
+          updatedOrder.status = "Accepted";
+          setOrders([...orders]);
+        }
+      });
+    }
+  }, [orders]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("orderReject", (orderId: any) => {
+        const updatedOrder: any = orders.find((o: any) => o.id == orderId);
+        if (updatedOrder) {
+          updatedOrder.status = "Rejected";
+          setOrders([...orders]);
+        }
+      });
+    }
+  }, [orders]);
 
   return (
     <>

@@ -95,7 +95,7 @@ function App() {
           />
           <Route
             path="/user-order"
-            element={isLoggedIn ? < UserOrderList/> : <Navigate to="/" />}
+            element={isLoggedIn ? <UserOrderList /> : <Navigate to="/" />}
           />
 
           <Route path="/*" element={<Navigate to="/login" />} />
