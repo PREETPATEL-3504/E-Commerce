@@ -33,6 +33,15 @@ const orderGet = (req, res) => {
   });
 };
 
+const userOrder = (req, res) => {
+  const userId = req.params.id;
+  const query = "SELECT * FROM orders WHERE userId = ?";
+  con.query(query, [userId], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.status(200).json(result);
+  });
+};
+
 const orderAccept = (req, res) => {
   const orderId = req.params.id;
   const query = "UPDATE orders SET status = 'accepted' WHERE id =?";
@@ -50,4 +59,4 @@ const orderReject = (req, res) => {
     res.status(200).json({ message: "Order rejected successfully" });
   });
 };
-module.exports = { orderGet, orderAdd, orderAccept,orderReject };
+module.exports = { orderGet, orderAdd, orderAccept, orderReject, userOrder };

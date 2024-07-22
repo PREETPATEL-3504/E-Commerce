@@ -27,16 +27,6 @@ const Navbar = ({ setIsLoggedIn }: any) => {
           </Link>
           <ul className="flex space-x-4">
             <li>
-              <Link to="#" className="hover:text-gray-400">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="#" className="hover:text-gray-400">
-                About
-              </Link>
-            </li>
-            <li>
               <Link
                 to="/login"
                 onClick={logOutHnadler}

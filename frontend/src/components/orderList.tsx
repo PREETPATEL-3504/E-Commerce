@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const OrderList = () => {
   const [orders, setOrders] = useState([]);
+  const [trigger, setTrigger] = useState(true);
   const userId = localStorage.getItem("id");
 
   const fetchOrders = async () => {
@@ -19,7 +21,7 @@ const OrderList = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [trigger]);
 
   const rejectHandler = (id: any) => {
     const url = `http://localhost:5000/order/reject/${id}`;
@@ -27,6 +29,7 @@ const OrderList = () => {
       toast.success("Order rejected successfully", {
         autoClose: 1000,
       });
+      setTrigger(!trigger);
     });
   };
 
@@ -36,6 +39,7 @@ const OrderList = () => {
       toast.success("Order accepted successfully", {
         autoClose: 1000,
       });
+      setTrigger(!trigger);
     });
   };
 
@@ -58,19 +62,17 @@ const OrderList = () => {
           </thead>
           <tbody>
             {orders.map((order: any) => (
-              <tr key={order.id}>
-                <td className="py-2 px-4 border-b">{order.id}</td>
-                <td className="py-2 px-4 border-b">{order.name}</td>
-                <td className="py-2 px-4 border-b">{order.quantity}</td>
-                <td className="py-2 px-4 border-b">{order.price}</td>
-                <td className="py-2 px-4 border-b">
-                  {order.price * order.quantity}
+              <tr key={order.id} className="">
+                <td className="py-2 px-4 border-b text-end">{order.id}</td>
+                <td className="py-2 px-4 border-b text-center">{order.name}</td>
+                <td className="py-2 px-4 border-b text-end">{order.quantity}</td>
+                <td className="py-2 px-4 border-b text-end">{order.price} $</td>
+                <td className="py-2 px-4 border-b text-end">
+                  {order.price * order.quantity} $
                 </td>
-                <td className="py-2 px-4 border-b">
-                  {order.status === "rejected" || "accepted" ? (
-                    <span className="text-black">{order.status}</span>
-                  ) : (
-                    <div>
+                <td className="py-2 px-4 border-b text-center">
+                  {order.status === "Pending" ? (
+                    <div className="">
                       <button
                         onClick={() => acceptHandler(order.id)}
                         className="bg-green-500 text-white py-1 px-3 rounded mr-2"
@@ -83,12 +85,18 @@ const OrderList = () => {
                       >
                         Reject
                       </button>
-                      <button
-                        onClick={() => rejectHandler(order.id)}
-                        className="bg-red-500 text-white py-1 px-3 rounded"
-                      >
-                        Reject
-                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      {order.status === "Accepted" ? (
+                        <span className="bg-green-500 text-white py-1 px-3 rounded mr-2">
+                          Accepted
+                        </span>
+                      ) : (
+                        <span className="bg-red-500 text-white py-1 px-3 rounded mr-2">
+                          Rejected
+                        </span>
+                      )}
                     </div>
                   )}
                 </td>
@@ -96,8 +104,16 @@ const OrderList = () => {
             ))}
           </tbody>
         </table>
-        );
+        <button className="mt-5">
+          <Link
+            to="/admin"
+            className="text-white py-2 px-4  rounded bg-blue-500 hover:bg-blue-700"
+          >
+            Back to Home
+          </Link>
+        </button>
       </div>
+      );
     </>
   );
 };

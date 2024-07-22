@@ -27,7 +27,7 @@ const UserProductlist = () => {
     console.log("socket: ", socket);
     if (socket) {
       socket.on("product", (Newproduct: any) => {
-        setProducts((prevProducts:any) => [...prevProducts, Newproduct]);
+        setProducts((prevProducts: any) => [...prevProducts, Newproduct]);
       });
     }
   }, [socket]);
@@ -98,19 +98,28 @@ const UserProductlist = () => {
           <h1 className="text-2xl text-white text-center font-bold  ">
             Product List
           </h1>
-
-          <button
-            className="ml-[85%] flex"
-            onClick={() => {
-              navigate("/cart");
-            }}
-          >
-            <span className="text-white">{itemCount}</span>
-            <IoCart className="text-3xl text-white text-center ml-[5%]" />{" "}
-          </button>
+          <div className="ml-[80%] flex gap-5">
+            <button
+              onClick={() => {
+                navigate("/user-order");
+              }}
+              className="text-white font-bold"
+            >
+              Orders
+            </button>
+            <button
+              className="flex"
+              onClick={() => {
+                navigate("/cart");
+              }}
+            >
+              <span className="text-white">{itemCount}</span>
+              <IoCart className="text-3xl text-white text-center ml-[5%]" />{" "}
+            </button>
+          </div>
         </div>
 
-        <table className="min-w-full border-separate border-spacing-0.5  border border-slate-500 border ">
+        <table className="min-w-full border-separate border-spacing-0.5  border border-slate-500 border">
           <thead>
             <tr className="bg-gray-100">
               <th className="border px-4 py-2">Name</th>
@@ -123,11 +132,11 @@ const UserProductlist = () => {
           </thead>
           <tbody>
             {products.map((product: any) => (
-              <tr key={product.id} className="bg-white">
+              <tr key={product.id} className="bg-white text-center">
                 <td className="border px-4 py-2">{product.name}</td>
-                <td className="border px-4 py-2">{product.price}</td>
-                <td className="border px-4 py-2">{product.quantity}</td>
-                <td className="border px-4 py-2">
+                <td className="border px-4 py-2 text-end">{product.price} $</td>
+                <td className="border px-4 py-2 text-end">{product.quantity}</td>
+                <td className="border px-4 py-2 text-center flex justify-center">
                   <img
                     src={`http://localhost:5000/${product.image_url}`}
                     alt={product.name}

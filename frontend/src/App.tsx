@@ -13,6 +13,7 @@ import io from "socket.io-client";
 import { useAppDispatch } from "./Store/Hooks";
 import { setSocket } from "./Store/Reducers/UserSlice";
 import OrderList from "./components/orderList";
+import UserOrderList from "./components/userOrderList";
 
 function App() {
   const ENDPOINT = "http://localhost:5000";
@@ -91,6 +92,10 @@ function App() {
           <Route
             path="/order"
             element={isLoggedIn ? <OrderList /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/user-order"
+            element={isLoggedIn ? < UserOrderList/> : <Navigate to="/" />}
           />
 
           <Route path="/*" element={<Navigate to="/login" />} />

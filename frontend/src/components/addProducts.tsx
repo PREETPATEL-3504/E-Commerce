@@ -6,6 +6,10 @@ import { toast } from "react-toastify";
 const AddProducts = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const AdminId = localStorage.getItem("id");
+  const token = localStorage.getItem("token");
+
   interface FormData {
     name: string;
     price: string | number;
@@ -18,7 +22,11 @@ const AddProducts = () => {
   useEffect(() => {
     const fetchdata = async () => {
       const url = `http://localhost:5000/product/products/${id}`;
-      const res = await axios.get(url);
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: token,
+        },
+      });
       setData(res.data);
     };
     if (id) {
@@ -34,15 +42,17 @@ const AddProducts = () => {
     description: "",
     AdminId: 0,
   });
-  const AdminId = localStorage.getItem("id");
- 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (id) {
       try {
         const url = `http://localhost:5000/product/products/${id}`;
-        const res = await axios.patch(url, data);
+        const res = await axios.patch(url, data, {
+          headers: {
+            Authorization: token,
+          },
+        });
         if (res.status === 200) {
           toast.success("Product Updated Successfully", {
             autoClose: 1000,
@@ -63,7 +73,11 @@ const AddProducts = () => {
         formdata.append("AdminId", String(AdminId));
 
         const url = "http://localhost:5000/product/products";
-        const res = await axios.post(url, formdata);
+        const res = await axios.post(url, formdata, {
+          headers: {
+            Authorization: token,
+          },
+        });
         if (res.status === 200) {
           toast.success("Product Added Successfully", {
             autoClose: 1000,
@@ -203,18 +217,15 @@ const AddProducts = () => {
               >
                 Submit
               </button>
+
+              <button
+                data-ripple-light="true"
+                type="submit"
+                className="block w-full mt-2 select-none rounded-lg bg-gradient-to-tr from-cyan-600 to-cyan-400 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-cyan-500/20 transition-all hover:shadow-lg hover:shadow-cyan-500/40 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              >
+                <Link to="/admin">Back to list</Link>
+              </button>
             </div>
-            {id ? (
-              <div className="p-6 pt-0">
-                <button
-                  data-ripple-light="true"
-                  type="submit"
-                  className="block w-full select-none rounded-lg bg-gradient-to-tr from-cyan-600 to-cyan-400 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-cyan-500/20 transition-all hover:shadow-lg hover:shadow-cyan-500/40 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                >
-                  <Link to="/admin">Back to list</Link>
-                </button>
-              </div>
-            ) : null}
           </form>
         </div>
       </div>

@@ -59,7 +59,7 @@ const AdminProductlist = () => {
         Product List
       </h1>
 
-      <table className="w-full  border border-gray-300 rounded-3xl p-9 mb-5">
+      <table className="w-full  border border-gray rounded-3xl p-9 mb-5">
         <thead>
           <tr className="bg-gray-100">
             <th className="border px-4 py-2">Name</th>
@@ -73,24 +73,26 @@ const AdminProductlist = () => {
         <tbody>
           {products.map((product: any) => (
             <tr key={product.id} className="bg-white">
-              <td className="border px-4 py-2">{product.name}</td>
-              <td className="border px-4 py-2">{product.price}</td>
-              <td className="border px-4 py-2">{product.quantity}</td>
-              <td className="border px-4 py-2">
+              <td className="border px-4 py-2 text-center">{product.name}</td>
+              <td className="border px-4 py-2 text-end">{product.price} $</td>
+              <td className="border px-4 py-2 text-end">{product.quantity}</td>
+              <td className="border px-4 py-2 text-center flex justify-center">
                 <img
                   src={`http://localhost:5000/${product.image_url}`}
                   alt="image"
                   className="w-16 h-16 object-cover"
                 />
               </td>
-              <td className="border px-4 py-2">{product.description}</td>
-              <td className="border px-4 py-2">
+              <td className="border px-4 py-2 text-center">
+                {product.description}
+              </td>
+              <td className="border px-4 py-2 text-center">
                 <button className="bg-blue-500 text-white px-4 py-2 rounded mr-2">
                   <Link to={`/add-product/${product.id}`}>Edit</Link>
                 </button>
                 <button
                   onClick={() => onDelete(product.id)}
-                  className="bg-red-500 text-white px-4 py-2 rounded"
+                  className="bg-red-500 text-white px-4 py-2 rounded "
                 >
                   Delete
                 </button>
