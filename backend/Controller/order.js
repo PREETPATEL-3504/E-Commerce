@@ -13,7 +13,14 @@ const orderAdd = async (req, res) => {
       [UserId, ProductId, quantity, price, AdminId, name],
       (err, result) => {
         if (err) throw err;
-        const data = result.data;
+        console.log("===================", result);
+        const data = {
+          productId: ProductId,
+          quantity: quantity,
+          price: price,
+          name: name,
+          status: "Pending",
+        }
         io.emit("orderAdd", data);
         res
           .status(200)

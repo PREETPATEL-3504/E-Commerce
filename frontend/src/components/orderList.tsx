@@ -2,11 +2,21 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const OrderList = () => {
-  const [orders, setOrders] = useState([]);
+  interface Order {
+    id: number;
+    name: string;
+    quantity: number;
+    price: number;
+    status: string;
+  }
+
+  const [orders, setOrders] = useState<Order[]>([]);
   const [trigger, setTrigger] = useState(true);
   const userId = localStorage.getItem("id");
+  const socket = useSelector((store:any)=> store.users.socket)
 
   const fetchOrders = async () => {
     try {
@@ -42,6 +52,14 @@ const OrderList = () => {
       setTrigger(!trigger);
     });
   };
+
+  useEffect(()=>{
+    if(socket){
+      socket.on('orderAdd',(data:any)=>{
+        setOrders([...orders, data]);
+      });
+    }
+  },[socket, orders])
 
  
 
