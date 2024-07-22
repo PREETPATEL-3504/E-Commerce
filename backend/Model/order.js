@@ -22,12 +22,20 @@ const Order = sequelize.define("orders", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  name:{
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   quantity: {
     type: DataTypes.INTEGER,
     defaultValue: 1,
   },
   price: {
     type: DataTypes.INTEGER,
+  },
+  status:{
+    type: DataTypes.ENUM('pending', 'accepted', 'rejected'),
+    defaultValue: 'pending',
   },
   createdAt: {
     type: DataTypes.DATE,

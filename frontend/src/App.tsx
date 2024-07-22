@@ -12,13 +12,15 @@ import Cart from "./components/cart";
 import io from "socket.io-client";
 import { useAppDispatch } from "./Store/Hooks";
 import { setSocket } from "./Store/Reducers/UserSlice";
+import OrderList from "./components/orderList";
 
 function App() {
   const ENDPOINT = "http://localhost:5000";
-  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("token") || null);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("token") || null
+  );
   const dispatch = useAppDispatch();
 
-  
   useEffect(() => {
     const handleStorageChange = () => {
       setIsLoggedIn(localStorage.getItem("token"));
@@ -84,6 +86,11 @@ function App() {
           <Route
             path="/cart"
             element={isLoggedIn ? <Cart /> : <Navigate to="/" />}
+          />
+
+          <Route
+            path="/order"
+            element={isLoggedIn ? <OrderList /> : <Navigate to="/" />}
           />
 
           <Route path="/*" element={<Navigate to="/login" />} />

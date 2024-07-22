@@ -82,7 +82,7 @@ const Cart = () => {
       toast.success("Order placed successfully", {
         autoClose: 1000,
       });
-      onDelete(item );
+      onDelete(item);
     });
   };
 
