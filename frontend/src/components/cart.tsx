@@ -77,14 +77,15 @@ const Cart = () => {
   };
 
   const onBuy = (item: any) => {
-    const url = `http://localhost:5000/cart/cart/checkout?UserId=${UserId}`;
-    axios.post(url).then((res) => {
+    const url = `http://localhost:5000/order/${UserId}`;
+    axios.post(url, item).then((res) => {
       toast.success("Order placed successfully", {
         autoClose: 1000,
       });
-      window.location.href = "/";
+      onDelete(item );
     });
-  }
+  };
+
   useEffect(() => {
     const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
     axios.get(url).then((res) => {
@@ -146,9 +147,10 @@ const Cart = () => {
             </div>
 
             <div className="ml-4 flex flex-col items-center">
-              <button 
-              onClick={()=>onBuy(product)}
-              className="bg-blue-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
+              <button
+                onClick={() => onBuy(product)}
+                className="bg-blue-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
+              >
                 Buy
               </button>
               <button
