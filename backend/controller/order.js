@@ -12,7 +12,6 @@ const orderAdd = async (req, res) => {
       [UserId, ProductId, quantity, price, AdminId, name],
       (err, result) => {
         if (err) throw err;
-        console.log("===================", result);
         const data = {
           productId: ProductId,
           quantity: quantity,

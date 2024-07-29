@@ -1,6 +1,7 @@
 const con = require("../db");
 const product = require("../model/product");
 const { io } = require("../socket");
+const productValidate = require("../validation/productValidation");
 
 const addProduct = async (req, res) => {
   const { error, value } = productValidate(req.body);

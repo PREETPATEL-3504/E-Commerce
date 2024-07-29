@@ -1,11 +1,13 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { TiPlus } from "react-icons/ti";
 import { TiMinus } from "react-icons/ti";
+import useRazorpay, { RazorpayOptions } from "react-razorpay";
 
 const Cart = () => {
+    const [Razorpay, isLoaded] = useRazorpay();
   const [cartProduct, setCartProduct] = useState([]);
   const [count, setCount] = useState(0);
   const [trigger, setTrigger] = useState(false);
@@ -76,15 +78,46 @@ const Cart = () => {
     }
   };
 
-  const onBuy = (item: any) => {
-    const url = `http://localhost:5000/order/${UserId}`;
-    axios.post(url, item).then((res) => {
-      toast.success("Order placed successfully", {
-        autoClose: 1000,
-      });
-      onDelete(item);
-    });
-  };
+  // const onBuy = (item: any) => {
+  //   const url = `http://localhost:5000/order/${UserId}`;
+  //   axios.post(url, item).then((res) => {
+  //     toast.success("Order placed successfully", {
+  //       autoClose: 1000,
+  //     });
+  //     onDelete(item);
+  //   });
+  // };
+
+
+  const handlePayment = useCallback(async(e:any) => {
+    
+    e.preventDefault();
+    const orderUrl = `http://localhost:5000/order/${UserId}`;
+    const response = await axios.get(orderUrl);
+    const { data } = response;
+    const options:any = {
+      key: 'rzp_test_K1NWP1siSCsRLp',
+      name: "Your App Name",
+      description: "Some Description",
+      order_id: data.id,
+      handler: async (response: any) => {
+        try {
+         const paymentId = response.razorpay_payment_id;
+         const url = `api/capture/${paymentId}`;
+         const captureResponse = await axios.post(url, {})
+         console.log(captureResponse.data);
+        } catch (err) {
+          console.log(err);
+        }
+      },
+      theme: {
+        color: "#686CFD",
+      },
+    };
+    const rzp1 = new Razorpay(options);
+    rzp1.open();
+  }, [Razorpay]);
+
 
   useEffect(() => {
     const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
@@ -150,7 +183,7 @@ const Cart = () => {
 
               <div className="ml-4 flex flex-col items-center">
                 <button
-                  onClick={() => onBuy(product)}
+                  onClick={handlePayment}
                   className="bg-blue-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
                 >
                   Buy

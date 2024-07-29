@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(cors(corsOption));
 
 //Image fetching
-app.use("/images", express.static(path.join(__dirname, "Images")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Routes
 const router = require("./routes/index");
