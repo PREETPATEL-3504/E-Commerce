@@ -1,6 +1,5 @@
 const { io } = require("../socket");
 const con = require("../db");
-const Order = require("../Model/order");
 
 const orderAdd = async (req, res) => {
   try {

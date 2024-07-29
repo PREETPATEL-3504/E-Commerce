@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { setSocket } from "../Store/Reducers/UserSlice";
+import { setSocket } from "../store/reducers/userSlice";
 import { io } from "socket.io-client";
 import { useEffect } from "react";
 

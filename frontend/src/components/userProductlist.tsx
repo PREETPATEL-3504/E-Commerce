@@ -2,8 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoCart } from "react-icons/io5";
-import { useAppDispatch, useAppSelector } from "../Store/Hooks";
-import { setProductList } from "../Store/Reducers/ProduceList";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setProductList } from "../store/reducers/productList";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 

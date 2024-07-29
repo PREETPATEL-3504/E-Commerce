@@ -5,9 +5,9 @@ const {
   deleteProduct,
   updateProduct,
   getProductbyid,
-} = require("../Controller/Product");
-const upload = require("../Controller/multerConfig");
-const verifyToken = require("../middelware/jwtVerify");
+} = require("../controller/product");
+const upload = require("../controller/multerConfig");
+const verifyToken = require("../middleware/jwtVerify");
 const router = express.Router();
 
 router.post("/products", upload.single("image_url"), addProduct);

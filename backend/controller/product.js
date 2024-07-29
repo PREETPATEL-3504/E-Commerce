@@ -1,6 +1,5 @@
 const con = require("../db");
-const Product = require("../Model/Product");
-const productValidate = require("../Validation/productValidation");
+const product = require("../model/product");
 const { io } = require("../socket");
 
 const addProduct = async (req, res) => {
@@ -153,7 +152,7 @@ const updateProduct = async (req, res) => {
 };
 
 const getProductbyid = (req, res) => {
-  Product.findByPk(req.params.id).then((product) => {
+  product.findByPk(req.params.id).then((product) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }

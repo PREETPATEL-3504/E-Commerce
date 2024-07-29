@@ -10,8 +10,8 @@ import UserDashboard from "./components/userDashboard";
 import AddProducts from "./components/addProducts";
 import Cart from "./components/cart";
 import io from "socket.io-client";
-import { useAppDispatch } from "./Store/Hooks";
-import { setSocket } from "./Store/Reducers/UserSlice";
+import { useAppDispatch } from "./store/hooks";
+import { setSocket } from "./store/reducers/userSlice";
 import OrderList from "./components/orderList";
 import UserOrderList from "./components/userOrderList";
 

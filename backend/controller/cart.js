@@ -1,6 +1,4 @@
-const { INSERT, DELETE } = require("sequelize/lib/query-types");
 const con = require("../db");
-const carts = require("../Model/Cart");
 
 const addToCart = async (req, res) => {
   const { AdminId, description, image_url, name, price } = req.body;

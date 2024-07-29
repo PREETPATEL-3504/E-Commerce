@@ -17,7 +17,7 @@ app.use(cors(corsOption));
 app.use("/images", express.static(path.join(__dirname, "Images")));
 
 // Routes
-const router = require("./Routes/index");
+const router = require("./routes/index");
 app.use("/", router);
 
 server.listen(5000, () => {

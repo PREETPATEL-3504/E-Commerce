@@ -1,9 +1,9 @@
-const user = require("../Model/user");
+const user = require("../model/user");
 const jwt = require("jsonwebtoken");
 const {
   userValidation,
   LoginValidation,
-} = require("../Validation/userValidation");
+} = require("../validation/userValidation");
 
 const { io } = require("../socket");
 
