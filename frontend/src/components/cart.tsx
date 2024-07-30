@@ -5,12 +5,14 @@ import { toast } from "react-toastify";
 import { TiPlus } from "react-icons/ti";
 import { TiMinus } from "react-icons/ti";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
+import { log } from "console";
 
 const Cart = () => {
-    const [Razorpay, isLoaded] = useRazorpay();
+  const [Razorpay, isLoaded] = useRazorpay();
   const [cartProduct, setCartProduct] = useState([]);
   const [count, setCount] = useState(0);
   const [trigger, setTrigger] = useState(false);
+  const [order, setOrder] = useState();
 
   const UserId = localStorage.getItem("id");
 
@@ -88,36 +90,50 @@ const Cart = () => {
   //   });
   // };
 
+  const options = {
+    key: "rzp_test_5W5tkiV5AbJbDk", // Enter the Key ID generated from the Dashboard
+    amount: "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    currency: "INR",
+    name: "Acme Corp",
+    description: "Test Transaction",
+    image: "https://example.com/your_logo",
+    order_id: "order_IluGWxBm9U8zK", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
 
-  const handlePayment = useCallback(async(e:any) => {
-    
-    e.preventDefault();
-    const orderUrl = `http://localhost:5000/order/${UserId}`;
-    const response = await axios.get(orderUrl);
-    const { data } = response;
-    const options:any = {
-      key: 'rzp_test_K1NWP1siSCsRLp',
-      name: "Your App Name",
-      description: "Some Description",
-      order_id: data.id,
-      handler: async (response: any) => {
-        try {
-         const paymentId = response.razorpay_payment_id;
-         const url = `api/capture/${paymentId}`;
-         const captureResponse = await axios.post(url, {})
-         console.log(captureResponse.data);
-        } catch (err) {
-          console.log(err);
-        }
-      },
-      theme: {
-        color: "#686CFD",
-      },
-    };
-    const rzp1 = new Razorpay(options);
-    rzp1.open();
-  }, [Razorpay]);
+    handler: function (response: any) {
+      alert(response.razorpay_payment_id);
+      alert(response.razorpay_order_id);
+      alert(response.razorpay_signature);
+    },
+    prefill: {
+      name: "Gaurav Kumar",
+      email: "gaurav.kumar@example.com",
+      contact: "9000090000",
+    },
+    notes: {
+      address: "Razorpay Corporate Office",
+    },
+    theme: {
+      color: "#3399cc",
+    },
+  };
 
+  var rzp1 = new Razorpay(options);
+
+  rzp1.on("payment.failed", function (response: any) {
+    debugger;
+  });
+
+  const handlePay = async (product: any) => {
+    try {
+      const orderURL = `http://localhost:5000/order/${UserId}`;
+      const { data } = await axios.post(orderURL, product);
+      setOrder(data);
+      console.log(order);
+      rzp1.open();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
@@ -183,7 +199,7 @@ const Cart = () => {
 
               <div className="ml-4 flex flex-col items-center">
                 <button
-                  onClick={handlePayment}
+                  onClick={() => handlePay(product)}
                   className="bg-blue-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
                 >
                   Buy

@@ -1,5 +1,7 @@
 const { io } = require("../socket");
 const con = require("../db");
+const crypto = require("crypto");
+const instance = require("../payment");
 
 const orderAdd = async (req, res) => {
   try {
@@ -18,11 +20,29 @@ const orderAdd = async (req, res) => {
           price: price,
           name: name,
           status: "Pending",
-        }
+        };
         io.emit("orderAdd", data);
-        res
-          .status(200)
-          .json({ message: "Order added successfully", data: result });
+
+        //Payment
+        try {
+          const options = {
+            amount: 100,
+            currency: "INR",
+            receipt: crypto.randomBytes(10).toString("hex"),
+          };
+          instance.orders.create(options, function (err, order) {
+            console.log(
+              "=================== Order ======================",
+              order
+            );
+            res
+              .status(200)
+              .json({ message: "Order id created successfully", order: order });
+          });
+        } catch (error) {
+          console.log("***************", error);
+          res.status(500).json({ message: "Internal Server Error!" });
+        }
       }
     );
   } catch (error) {
