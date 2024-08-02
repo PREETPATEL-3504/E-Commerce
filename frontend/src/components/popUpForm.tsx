@@ -7,14 +7,20 @@ function PopUpForm({ isVisible, onClose, id }: any) {
   if (!isVisible) return null;
 
   const sendMail = (): any => {
-      const url = `http://localhost:5000/order/reject/${id}`;
-      axios.patch(url).then((res:any) => {
-        toast.success("Order rejected successfully", {
-          autoClose: 1000,
-        });
-        
+    const url = `http://localhost:5000/order/reject/${id}`;
+    axios.patch(url).then((res: any) => {
+      toast.success("Order rejected successfully", {
+        autoClose: 1000,    
+    });
+    onClose();
+    }).catch((error: any) => {
+      toast.error("Failed to reject order", {
+        autoClose: 1000,
       });
+    });
   };
+
+
   return (
     <>
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

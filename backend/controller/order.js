@@ -91,7 +91,7 @@ const orderReject = (req, res) => {
 
   var mailOptions = {
     from: "skyllect.preet@gmail.com",
-    to: "pinek71998@maxturns.com",
+    to: "vicol46067@mvpalace.com",
     subject: "Sending Email using Node.js",
     text: "Sorry your order rejected",
   };
@@ -99,9 +99,9 @@ const orderReject = (req, res) => {
   if (transporter) {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log(error);
+        res.json({error: error});
       } else {
-        console.log("Email sent: " + info.response);
+        res.json({"Email sent: ": info.response});
       }
     });
   } else {
