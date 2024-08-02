@@ -39,9 +39,7 @@ const Product = sequelize.define("Product", {
 
 sequelize
   .sync()
-  .then(() => {
-    console.log("Product table has been created.");
-  })
+  .then()
   .catch((error) => console.log("This error occured", error));
 
 module.exports = Product;

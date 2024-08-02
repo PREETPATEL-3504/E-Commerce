@@ -108,7 +108,7 @@ const Cart = () => {
     rzp1.open();
     rzp1.on("payment.success", (response: any) => {
       toast.success("Payment successful", {
-        autoClose: 1000,
+        autoClose: 500,
       });
     })
     rzp1.on("payment.error", (response: any) => {
@@ -118,7 +118,7 @@ const Cart = () => {
     });
   };
   
-  const handlePay = async (product: any) => {
+  const handlePay = async ( product: any) => {
     try {
       const orderURL = `http://localhost:5000/order/${UserId}`;
       const  data:any  = await axios.post(orderURL, product);

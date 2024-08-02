@@ -59,8 +59,8 @@ const orderGet = (req, res) => {
 
 const userOrder = (req, res) => {
   const userId = req.params.id;
-  const query = "SELECT * FROM orders WHERE userId = ?";
-  con.query(query, [userId], (err, result) => {
+  const query = "SELECT * FROM orders WHERE userId = ? AND paymentStatus = ?";
+  con.query(query, [userId, "Success"], (err, result) => {
     if (err) return res.status(500).json(err);
     res.status(200).json(result);
   });
