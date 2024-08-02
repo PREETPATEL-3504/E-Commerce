@@ -7,44 +7,41 @@ const orderAdd = async (req, res) => {
   try {
     const UserId = req.params.id;
     const { ProductId, quantity, price, AdminId, name } = req.body;
-    const query =
-      "INSERT INTO orders (userId, productId, quantity, price, adminid, name) VALUES (?,?,?,?,?,?)";
-    con.query(
-      query,
-      [UserId, ProductId, quantity, price, AdminId, name],
-      (err, result) => {
-        if (err) throw err;
-        const data = {
-          productId: ProductId,
-          quantity: quantity,
-          price: price,
-          name: name,
-          status: "Pending",
-        };
-        io.emit("orderAdd", data);
 
-        //Payment
-        try {
-          const options = {
-            amount: 100,
-            currency: "INR",
-            receipt: crypto.randomBytes(10).toString("hex"),
-          };
-          instance.orders.create(options, function (err, order) {
-            console.log(
-              "=================== Order ======================",
-              order
-            );
-            res
-              .status(200)
-              .json({ message: "Order id created successfully", order: order });
-          });
-        } catch (error) {
-          console.log("***************", error);
-          res.status(500).json({ message: "Internal Server Error!" });
-        }
-      }
-    );
+    //Payment
+    try {
+      const options = {
+        amount: price,
+        currency: "INR",
+        receipt: crypto.randomBytes(10).toString("hex"),
+      };
+      instance.orders.create(options, function (err, order) {
+        const orderId = order.id;
+        const query =
+          "INSERT INTO orders (userId, productId, quantity, price, adminid, name, orderId, paymentStatus) VALUES (?,?,?,?,?,?,?,?)";
+        con.query(
+          query,
+          [UserId, ProductId, quantity, price, AdminId, name, orderId, "Pending"],
+          (err, result) => {
+            if (err) throw err;
+            const data = {
+              productId: ProductId,
+              quantity: quantity,
+              price: price,
+              name: name,
+              orderId: orderId,
+              status: "Pending"
+            };
+            io.emit("orderAdd", data);
+          }
+        );
+        res
+          .status(200)
+          .json({ message: "Order id created successfully", order: order });
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error!" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error adding order" });

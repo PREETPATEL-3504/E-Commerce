@@ -90,48 +90,45 @@ const Cart = () => {
   //   });
   // };
 
-  const options = {
-    key: "rzp_test_5W5tkiV5AbJbDk", // Enter the Key ID generated from the Dashboard
-    amount: "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-    currency: "INR",
-    name: "Acme Corp",
-    description: "Test Transaction",
-    image: "https://example.com/your_logo",
-    order_id: "order_IluGWxBm9U8zK", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
 
-    handler: function (response: any) {
-      alert(response.razorpay_payment_id);
-      alert(response.razorpay_order_id);
-      alert(response.razorpay_signature);
-    },
-    prefill: {
-      name: "Gaurav Kumar",
-      email: "gaurav.kumar@example.com",
-      contact: "9000090000",
-    },
-    notes: {
-      address: "Razorpay Corporate Office",
-    },
-    theme: {
-      color: "#3399cc",
-    },
+  const initPay = (data:any) => {
+    const options = {
+      key : "rzp_test_5W5tkiV5AbJbDk",
+      amount: data.amount,
+      currency: data.currency,
+      name: data.name,
+      description: "Test",
+      image:data.img,
+      order_id: data.id,
+      theme: {
+        color: "#3399cc",
+      },
+    };
+    const rzp1 = new Razorpay(options);
+    rzp1.open();
+    rzp1.on("payment.success", (response: any) => {
+      toast.success("Payment successful", {
+        autoClose: 1000,
+      });
+    })
+    rzp1.on("payment.error", (response: any) => {
+      toast.error("Payment failed", {
+        autoClose: 500,
+      });
+    });
   };
-
-  var rzp1 = new Razorpay(options);
-
-  rzp1.on("payment.failed", function (response: any) {
-    debugger;
-  });
-
+  
   const handlePay = async (product: any) => {
     try {
       const orderURL = `http://localhost:5000/order/${UserId}`;
-      const { data } = await axios.post(orderURL, product);
+      const  data:any  = await axios.post(orderURL, product);
       setOrder(data);
-      console.log(order);
-      rzp1.open();
+      initPay(data.data.order);
     } catch (error) {
       console.log(error);
+      toast.error("Failed to place order", {
+        autoClose: 500,
+      });
     }
   };
 
