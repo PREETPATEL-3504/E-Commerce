@@ -8,11 +8,10 @@ import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import { log } from "console";
 
 const Cart = () => {
-  const [Razorpay, isLoaded] = useRazorpay();
+  const [Razorpay] = useRazorpay();
   const [cartProduct, setCartProduct] = useState([]);
   const [count, setCount] = useState(0);
   const [trigger, setTrigger] = useState(false);
-  const [order, setOrder] = useState();
 
   const UserId = localStorage.getItem("id");
 
@@ -90,15 +89,14 @@ const Cart = () => {
   //   });
   // };
 
-
-  const initPay = (data:any) => {
+  const initPay = (data: any) => {
     const options = {
-      key : "rzp_test_5W5tkiV5AbJbDk",
+      key: "rzp_test_5W5tkiV5AbJbDk",
       amount: data.amount,
       currency: data.currency,
       name: data.name,
       description: "Test",
-      image:data.img,
+      image: data.img,
       order_id: data.id,
       theme: {
         color: "#3399cc",
@@ -110,19 +108,24 @@ const Cart = () => {
       toast.success("Payment successful", {
         autoClose: 500,
       });
-    })
+      const id = data.id;
+      const url = `http://localhost:5000/cart/cart/${id}`;
+      axios.delete(url).then((res) => {
+        toast.success("item remove successfully", {
+          autoClose: 1000,
+        });
+      });
+    });
     rzp1.on("payment.error", (response: any) => {
       toast.error("Payment failed", {
         autoClose: 500,
       });
     });
   };
-  
-  const handlePay = async ( product: any) => {
+  const handlePay = async (product: any) => {
     try {
       const orderURL = `http://localhost:5000/order/${UserId}`;
-      const  data:any  = await axios.post(orderURL, product);
-      setOrder(data);
+      const data: any = await axios.post(orderURL, product);
       initPay(data.data.order);
     } catch (error) {
       console.log(error);

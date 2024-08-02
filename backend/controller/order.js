@@ -2,6 +2,7 @@ const { io } = require("../socket");
 const con = require("../db");
 const crypto = require("crypto");
 const instance = require("../payment");
+const transporter = require("../services/mail");
 
 const orderAdd = async (req, res) => {
   try {
@@ -78,11 +79,34 @@ const orderAccept = (req, res) => {
 
 const orderReject = (req, res) => {
   const orderId = req.params.id;
-  const query = "UPDATE orders SET status ='Rejected' WHERE id =?";
-  con.query(query, [orderId], (err, result) => {
-    if (err) return res.status(500).json(err);
-    io.emit("orderReject", orderId);
-    res.status(200).json({ message: "Order rejected successfully" });
-  });
+  // const query = "UPDATE orders SET status ='Rejected' WHERE id =?";
+  // con.query(query, [orderId], (err, result) => {
+  //   if (err) return res.status(500).json(err);
+  //   io.emit("orderReject", orderId);
+
+
+
+  //   res.status(200).json({ message: "Order rejected successfully" });
+  // });
+
+  var mailOptions = {
+    from: "skyllect.preet@gmail.com",
+    to: "pinek71998@maxturns.com",
+    subject: "Sending Email using Node.js",
+    text: "Sorry your order rejected",
+  };
+
+  if (transporter) {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+  } else {
+    console.error("transporter is undefined");
+  }
 };
+
 module.exports = { orderGet, orderAdd, orderAccept, orderReject, userOrder };

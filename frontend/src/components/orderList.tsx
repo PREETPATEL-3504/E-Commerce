@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import PopUpForm from "./popUpForm";
 
 const OrderList = () => {
   interface Order {
@@ -16,7 +17,13 @@ const OrderList = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [trigger, setTrigger] = useState(true);
   const userId = localStorage.getItem("id");
-  const socket = useSelector((store:any)=> store.users.socket)
+  const socket = useSelector((store: any) => store.users.socket);
+
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+
+  const togglePopup = () => {
+    setIsPopupVisible(!isPopupVisible);
+  };
 
   const fetchOrders = async () => {
     try {
@@ -34,13 +41,15 @@ const OrderList = () => {
   }, [trigger]);
 
   const rejectHandler = (id: any) => {
-    const url = `http://localhost:5000/order/reject/${id}`;
-    axios.patch(url).then((res) => {
-      toast.success("Order rejected successfully", {
-        autoClose: 1000,
-      });
-      setTrigger(!trigger);
-    });
+    togglePopup();
+    setTrigger(!trigger);
+    // const url = `http://localhost:5000/order/reject/${id}`;
+    // axios.patch(url).then((res) => {
+    //   toast.success("Order rejected successfully", {
+    //     autoClose: 1000,
+    //   });
+    //   setTrigger(!trigger);
+    // });
   };
 
   const acceptHandler = (id: any) => {
@@ -53,15 +62,13 @@ const OrderList = () => {
     });
   };
 
-  useEffect(()=>{
-    if(socket){
-      socket.on('orderAdd',(data:any)=>{
+  useEffect(() => {
+    if (socket) {
+      socket.on("orderAdd", (data: any) => {
         setOrders([...orders, data]);
       });
     }
-  },[socket, orders])
-
- 
+  }, [socket, orders]);
 
   return (
     <>
@@ -83,9 +90,12 @@ const OrderList = () => {
           <tbody>
             {orders.map((order: any) => (
               <tr key={order.id} className="">
+                <PopUpForm isVisible={isPopupVisible} onClose={togglePopup} id={order.id}/>
                 <td className="py-2 px-4 border-b text-end">{order.id}</td>
                 <td className="py-2 px-4 border-b text-center">{order.name}</td>
-                <td className="py-2 px-4 border-b text-end">{order.quantity}</td>
+                <td className="py-2 px-4 border-b text-end">
+                  {order.quantity}
+                </td>
                 <td className="py-2 px-4 border-b text-end">{order.price} $</td>
                 <td className="py-2 px-4 border-b text-end">
                   {order.price * order.quantity} $
