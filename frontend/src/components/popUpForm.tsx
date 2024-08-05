@@ -1,25 +1,30 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-
 function PopUpForm({ isVisible, onClose, id }: any) {
-
   if (!isVisible) return null;
 
   const sendMail = (): any => {
+    console.log("===========", id,  "===========");
     const url = `http://localhost:5000/order/reject/${id}`;
-    axios.patch(url).then((res: any) => {
-      toast.success("Order rejected successfully", {
-        autoClose: 1000,    
-    });
-    onClose();
-    }).catch((error: any) => {
-      toast.error("Failed to reject order", {
-        autoClose: 1000,
+    axios
+      .patch(url)
+      .then((res: any) => {
+        toast.success("Order rejected successfully", {
+          autoClose: 1000,
+        });
+      })
+      .catch((error: any) => {
+        toast.error("Failed to reject order", {
+          autoClose: 1000,
+        });
       });
+    console.log("Mail button clicked");
+    onClose();
+    toast.success("Mail sent successfully", {
+      autoClose: 1000,
     });
   };
-
 
   return (
     <>

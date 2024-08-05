@@ -43,13 +43,6 @@ const OrderList = () => {
   const rejectHandler = (id: any) => {
     togglePopup();
     setTrigger(!trigger);
-    // const url = `http://localhost:5000/order/reject/${id}`;
-    // axios.patch(url).then((res) => {
-    //   toast.success("Order rejected successfully", {
-    //     autoClose: 1000,
-    //   });
-    //   setTrigger(!trigger);
-    // });
   };
 
   const acceptHandler = (id: any) => {
@@ -90,7 +83,6 @@ const OrderList = () => {
           <tbody>
             {orders.map((order: any) => (
               <tr key={order.id} className="">
-                <PopUpForm isVisible={isPopupVisible} onClose={togglePopup} id={order.id}/>
                 <td className="py-2 px-4 border-b text-end">{order.id}</td>
                 <td className="py-2 px-4 border-b text-center">{order.name}</td>
                 <td className="py-2 px-4 border-b text-end">
@@ -114,6 +106,11 @@ const OrderList = () => {
                         className="bg-red-500 text-white py-1 px-3 rounded"
                       >
                         Reject
+                        <PopUpForm
+                          isVisible={isPopupVisible}
+                          onClose={togglePopup}
+                          id={order.id}
+                        />
                       </button>
                     </div>
                   ) : (

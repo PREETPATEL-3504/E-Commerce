@@ -4,7 +4,7 @@ const sequelize = new Sequelize("E-commerce", "root", "root", {
   dialect: "mysql",
 });
 
-const Order = sequelize.define("orders", {
+const order = sequelize.define("orders", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -50,10 +50,9 @@ const Order = sequelize.define("orders", {
 
 
 sequelize
-  .sync({force: true})
-  .then(() => {
-    console.log("orders table has been created.");
-  })
-  .catch((error) => console.log("This error occured", error));
+  .sync()
+  .then()
+  .catch((err) => console.log("Error occurred", err));
 
-module.exports = Order;
+
+module.exports = order;

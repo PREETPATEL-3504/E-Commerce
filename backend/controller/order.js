@@ -3,13 +3,14 @@ const con = require("../db");
 const crypto = require("crypto");
 const instance = require("../payment");
 const transporter = require("../services/mail");
+const order = require("../model/order")
 
 const orderAdd = async (req, res) => {
   try {
     const UserId = req.params.id;
     const { ProductId, quantity, price, AdminId, name } = req.body;
 
-    //Payment
+    
     try {
       const options = {
         amount: price,
@@ -79,19 +80,17 @@ const orderAccept = (req, res) => {
 
 const orderReject = (req, res) => {
   const orderId = req.params.id;
-  // const query = "UPDATE orders SET status ='Rejected' WHERE id =?";
-  // con.query(query, [orderId], (err, result) => {
-  //   if (err) return res.status(500).json(err);
-  //   io.emit("orderReject", orderId);
-
-
-
-  //   res.status(200).json({ message: "Order rejected successfully" });
-  // });
+  console.log("=========", orderId, "============");
+  const query = "UPDATE orders SET status ='Rejected' WHERE id =?";
+  con.query(query, [orderId], (err, result) => {
+    if (err) return res.status(500).json(err);
+    io.emit("orderReject", orderId);
+    res.status(200).json({ message: "Order rejected successfully" });
+  });
 
   var mailOptions = {
     from: "skyllect.preet@gmail.com",
-    to: "vicol46067@mvpalace.com",
+    to: "melapat165@alientex.com",
     subject: "Sending Email using Node.js",
     text: "Sorry your order rejected",
   };
