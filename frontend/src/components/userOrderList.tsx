@@ -3,11 +3,20 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import PopUpForm from "./popUpForm";
 
 const UserOrderList = () => {
   const [orders, setOrders] = useState([]);
   const userId = localStorage.getItem("id");
   const socket = useSelector((store: any) => store.users.socket);
+
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState(null);
+
+  const togglePopup = (orderId: any | null = null) => {
+    setIsPopupVisible(!isPopupVisible);
+    setCurrentOrderId(orderId);
+  };
 
   const fetchOrders = async () => {
     try {
@@ -29,9 +38,7 @@ const UserOrderList = () => {
   useEffect(() => {
     if (socket) {
       socket.on("orderAccept", (orderId: any) => {
-        console.log("=============", orderId);
         const updatedOrder: any = orders.find((o: any) => o.id == orderId);
-        console.log("=============", updatedOrder);
         if (updatedOrder) {
           updatedOrder.status = "Accepted";
           setOrders([...orders]);
@@ -52,6 +59,10 @@ const UserOrderList = () => {
     }
   }, [orders]);
 
+  const rejectHandler = (id: any) => {
+    togglePopup(id);
+  };
+
   return (
     <>
       <div className="container mx-auto p-4">
@@ -67,6 +78,7 @@ const UserOrderList = () => {
               <th className="py-2 px-4 border-b">Price</th>
               <th className="py-2 px-4 border-b">Total amount</th>
               <th className="py-2 px-4 border-b">Status</th>
+              <th className="py-2 px-4 border-b">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -102,6 +114,14 @@ const UserOrderList = () => {
                     </div>
                   )}
                 </td>
+                <td>
+                <button
+                        onClick={() => rejectHandler(order.id)}
+                        className="bg-red-500 text-white py-1 px-3 rounded"
+                      >
+                        Reject
+                      </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -110,6 +130,13 @@ const UserOrderList = () => {
           <Link to="/user">Continue Shopping</Link>
         </button>
       </div>
+      {isPopupVisible && (
+        <PopUpForm
+          isVisible={isPopupVisible}
+          onClose={togglePopup}
+          id={currentOrderId}
+        />
+      )}
       );
     </>
   );

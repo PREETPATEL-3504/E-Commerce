@@ -20,9 +20,12 @@ const OrderList = () => {
   const socket = useSelector((store: any) => store.users.socket);
 
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState(null);
 
-  const togglePopup = () => {
+  const togglePopup = (orderId: any | null = null) => {
     setIsPopupVisible(!isPopupVisible);
+    setCurrentOrderId(orderId);
+    setTrigger(!trigger)
   };
 
   const fetchOrders = async () => {
@@ -41,8 +44,7 @@ const OrderList = () => {
   }, [trigger]);
 
   const rejectHandler = (id: any) => {
-    togglePopup();
-    setTrigger(!trigger);
+    togglePopup(id);
   };
 
   const acceptHandler = (id: any) => {
@@ -66,7 +68,7 @@ const OrderList = () => {
   return (
     <>
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl text-white text-centerfont-bold mb-4">
+        <h1 className="text-2xl text-white text-center font-bold mb-4">
           Orders
         </h1>
         <table className="min-w-full bg-white border">
@@ -106,11 +108,6 @@ const OrderList = () => {
                         className="bg-red-500 text-white py-1 px-3 rounded"
                       >
                         Reject
-                        <PopUpForm
-                          isVisible={isPopupVisible}
-                          onClose={togglePopup}
-                          id={order.id}
-                        />
                       </button>
                     </div>
                   ) : (
@@ -140,7 +137,13 @@ const OrderList = () => {
           </Link>
         </button>
       </div>
-      );
+      {isPopupVisible && (
+        <PopUpForm
+          isVisible={isPopupVisible}
+          onClose={togglePopup}
+          id={currentOrderId}
+        />
+      )}
     </>
   );
 };

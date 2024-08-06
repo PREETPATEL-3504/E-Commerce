@@ -10,7 +10,7 @@ const orderAdd = async (req, res) => {
     const UserId = req.params.id;
     const { ProductId, quantity, price, AdminId, name } = req.body;
 
-    
+
     try {
       const options = {
         amount: price,
@@ -80,32 +80,46 @@ const orderAccept = (req, res) => {
 
 const orderReject = (req, res) => {
   const orderId = req.params.id;
-  console.log("=========", orderId, "============");
-  const query = "UPDATE orders SET status ='Rejected' WHERE id =?";
-  con.query(query, [orderId], (err, result) => {
-    if (err) return res.status(500).json(err);
-    io.emit("orderReject", orderId);
-    res.status(200).json({ message: "Order rejected successfully" });
-  });
+  console.log("---->>>>", req.body.reason, req.body.comment );
+  const subject = req.body.reason;
+  const body = req.body.comment;
+  const que = "SELECT userId FROM orders WHERE id = ?"
 
-  var mailOptions = {
-    from: "skyllect.preet@gmail.com",
-    to: "melapat165@alientex.com",
-    subject: "Sending Email using Node.js",
-    text: "Sorry your order rejected",
-  };
+  con.query(que, [orderId], (err, result) => {
+    if (err) throw err;
+    const userId = result[0].userId;
+    const query = "SELECT email FROM users WHERE id = ?"
 
-  if (transporter) {
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        res.json({error: error});
+    con.query(query, [userId], (err, result) => {
+      if (err) throw err;
+      const email = result[0].email;
+      var mailOptions = {
+        from: "skyllect.preet@gmail.com",
+        to: email,
+        subject: subject,
+        text: body,
+      };
+
+      if (transporter) {
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            res.json({ error: error });
+          } else {
+            const query = "UPDATE orders SET status ='Rejected' WHERE id = ?";
+            con.query(query, [orderId], (err, result) => {
+              if (err) return res.status(500).json(err);
+              io.emit("orderReject", orderId);
+              res.status(200).json({ message: "Order rejected successfully" });
+            });
+          }
+        });
       } else {
-        res.json({"Email sent: ": info.response});
+        console.error("transporter is undefined");
       }
     });
-  } else {
-    console.error("transporter is undefined");
-  }
+  });
+
+
 };
 
 module.exports = { orderGet, orderAdd, orderAccept, orderReject, userOrder };
