@@ -2,14 +2,13 @@ const { io } = require("../socket");
 const con = require("../db");
 const crypto = require("crypto");
 const instance = require("../payment");
-const transporter = require("../services/mail");
-const order = require("../model/order")
+const order = require("../model/order");
+const mail = require("../services/mail");
 
 const orderAdd = async (req, res) => {
   try {
     const UserId = req.params.id;
-    const { ProductId, quantity, price, AdminId, name } = req.body;
-
+    const { ProductId, quantity, price, AdminId, name, image_url } = req.body;
 
     try {
       const options = {
@@ -18,32 +17,41 @@ const orderAdd = async (req, res) => {
         receipt: crypto.randomBytes(10).toString("hex"),
       };
       instance.orders.create(options, function (err, order) {
-        const orderId = order.id;
-        const query =
-          "INSERT INTO orders (userId, productId, quantity, price, adminid, name, orderId, paymentStatus) VALUES (?,?,?,?,?,?,?,?)";
-        con.query(
-          query,
-          [UserId, ProductId, quantity, price, AdminId, name, orderId, "Pending"],
-          (err, result) => {
-            if (err) throw err;
-            const data = {
-              productId: ProductId,
-              quantity: quantity,
-              price: price,
-              name: name,
-              orderId: orderId,
-              status: "Pending"
-            };
-            io.emit("orderAdd", data);
-          }
-        );
-        res
-          .status(200)
-          .json({ message: "Order id created successfully", order: order });
+        res.status(200).json({ order: order });
       });
     } catch (error) {
       res.status(500).json({ message: "Internal Server Error!" });
     }
+
+    // const orderId = order.id;
+    // const query =
+    //   "INSERT INTO orders (userId, productId, quantity, price, adminid, name, orderId, paymentStatus, image) VALUES (?,?,?,?,?,?,?,?, ?)";
+    // con.query(
+    //   query,
+    //   [
+    //     UserId,
+    //     ProductId,
+    //     quantity,
+    //     price,
+    //     AdminId,
+    //     name,
+    //     orderId,
+    //     "Pending",
+    //     image_url,
+    //   ],
+    //   (err, result) => {
+    //     if (err) throw err;
+    //     const data = {
+    //       productId: ProductId,
+    //       quantity: quantity,
+    //       price: price,
+    //       name: name,
+    //       orderId: orderId,
+    //       status: "Pending",
+    //     };
+    //     io.emit("orderAdd", data);
+    //   }
+    // );
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error adding order" });
@@ -79,47 +87,44 @@ const orderAccept = (req, res) => {
 };
 
 const orderReject = (req, res) => {
-  const orderId = req.params.id;
-  console.log("---->>>>", req.body.reason, req.body.comment );
-  const subject = req.body.reason;
-  const body = req.body.comment;
-  const que = "SELECT userId FROM orders WHERE id = ?"
+  const { id } = req.params;
+  const { reason, body, role } = req.body;
+  const que = "SELECT userId, adminId FROM orders WHERE id = ?";
 
-  con.query(que, [orderId], (err, result) => {
+  con.query(que, [id], (err, result) => {
     if (err) throw err;
+
     const userId = result[0].userId;
-    const query = "SELECT email FROM users WHERE id = ?"
+    const adminId = result[0].adminId;
 
-    con.query(query, [userId], (err, result) => {
-      if (err) throw err;
-      const email = result[0].email;
-      var mailOptions = {
-        from: "skyllect.preet@gmail.com",
-        to: email,
-        subject: subject,
-        text: body,
-      };
-
-      if (transporter) {
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            res.json({ error: error });
-          } else {
-            const query = "UPDATE orders SET status ='Rejected' WHERE id = ?";
-            con.query(query, [orderId], (err, result) => {
-              if (err) return res.status(500).json(err);
-              io.emit("orderReject", orderId);
-              res.status(200).json({ message: "Order rejected successfully" });
-            });
-          }
+    if (role === "admin") {
+      const query = "SELECT email FROM users WHERE id = ?";
+      con.query(query, [userId], (err, result) => {
+        if (err) throw err;
+        const emailTo = result[0].email;
+        mail(emailTo, reason, body);
+        const query = "UPDATE orders SET status ='Rejected' WHERE id = ?";
+        con.query(query, [id], (err, result) => {
+          if (err) return res.status(500).json(err);
+          io.emit("orderReject", id);
+          res.status(200).json({ message: "Order rejected successfully" });
         });
-      } else {
-        console.error("transporter is undefined");
-      }
-    });
+      });
+    } else {
+      const query = "SELECT email FROM users WHERE id = ?";
+      con.query(query, [adminId], (err, result) => {
+        if (err) throw err;
+        const emailTo = result[0].email;
+        mail(emailTo, reason, body);
+        const query = "UPDATE orders SET status ='Cancelled' WHERE id = ?";
+        con.query(query, [id], (err, result) => {
+          if (err) return res.status(500).json(err);
+          io.emit("orderCancel", id);
+          res.status(200).json({ message: "Order rejected successfully" });
+        });
+      });
+    }
   });
-
-
 };
 
 module.exports = { orderGet, orderAdd, orderAccept, orderReject, userOrder };

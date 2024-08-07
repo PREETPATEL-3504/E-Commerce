@@ -10,4 +10,24 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-module.exports = transporter;
+const  mail = (emailTo, subject, body) => {
+  var mailOptions = {
+    from: "skyllect.preet@gmail.com",
+    to: emailTo,
+    subject: subject,
+    text: body,
+  };
+
+  if (transporter) {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        res.json({ error: error });
+      } else {
+        
+      }
+    });
+  } else {
+    console.error("transporter is undefined");
+  }
+}
+module.exports = mail;

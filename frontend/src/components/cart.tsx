@@ -1,11 +1,10 @@
 import axios from "axios";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { TiPlus } from "react-icons/ti";
 import { TiMinus } from "react-icons/ti";
-import useRazorpay, { RazorpayOptions } from "react-razorpay";
-import { log } from "console";
+import useRazorpay from "react-razorpay";
 
 const Cart = () => {
   const [Razorpay] = useRazorpay();
@@ -79,17 +78,7 @@ const Cart = () => {
     }
   };
 
-  // const onBuy = (item: any) => {
-  //   const url = `http://localhost:5000/order/${UserId}`;
-  //   axios.post(url, item).then((res) => {
-  //     toast.success("Order placed successfully", {
-  //       autoClose: 1000,
-  //     });
-  //     onDelete(item);
-  //   });
-  // };
-
-  const initPay = (data: any) => {
+  const initPay = (data: any, id: any) => {
     const options = {
       key: "rzp_test_5W5tkiV5AbJbDk",
       amount: data.amount,
@@ -103,32 +92,28 @@ const Cart = () => {
       },
     };
     const rzp1 = new Razorpay(options);
+
+    rzp1.on("payment.failed", function (response: any) {
+      alert(response.error.code);
+      alert(response.error.description);
+      alert(response.error.source);
+      alert(response.error.step);
+      alert(response.error.reason);
+      alert(response.error.metadata.order_id);
+      alert(response.error.metadata.payment_id);
+    });
+
     rzp1.open();
-    rzp1.on("payment.success", (response: any) => {
-      toast.success("Payment successful", {
-        autoClose: 500,
-      });
-      const id = data.id;
-      const url = `http://localhost:5000/cart/cart/${id}`;
-      axios.delete(url).then((res) => {
-        toast.success("item remove successfully", {
-          autoClose: 1000,
-        });
-      });
-    });
-    rzp1.on("payment.error", (response: any) => {
-      toast.error("Payment failed", {
-        autoClose: 500,
-      });
-    });
+
+    setTrigger(!trigger);
   };
-  const handlePay = async (product: any) => {
+
+  const handlePay = async (product: any, id: any) => {
     try {
       const orderURL = `http://localhost:5000/order/${UserId}`;
       const data: any = await axios.post(orderURL, product);
-      initPay(data.data.order);
+      initPay(data.data.order, id);
     } catch (error) {
-      console.log(error);
       toast.error("Failed to place order", {
         autoClose: 500,
       });
@@ -199,7 +184,7 @@ const Cart = () => {
 
               <div className="ml-4 flex flex-col items-center">
                 <button
-                  onClick={() => handlePay(product)}
+                  onClick={() => handlePay(product, product.id)}
                   className="bg-blue-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
                 >
                   Buy

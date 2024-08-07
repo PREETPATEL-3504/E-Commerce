@@ -18,7 +18,7 @@ function PopUpForm({ isVisible, onClose, id }: any) {
 
   const sendMail = (): any => {
     const url = `http://localhost:5000/order/reject/${id}`;
-    const data = { reason: reason.reason, comment: reason.comment };
+    const data = { reason: reason.reason, comment: reason.comment, role: role};
 
     axios
       .patch(url, data)
@@ -54,7 +54,13 @@ function PopUpForm({ isVisible, onClose, id }: any) {
           onClick={handlePopupContentClick}
         >
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-blue-600">Reject Product</h2>
+            {role == "Admin" ? (
+              <h2 className="text-2xl font-bold text-blue-600">
+                Reject Product
+              </h2>
+            ) : (
+              <h2 className="text-2xl font-bold text-blue-600">Cancel Order</h2>
+            )}
             <button
               className="text-gray-500 hover:text-gray-700"
               onClick={onClose}
@@ -79,34 +85,33 @@ function PopUpForm({ isVisible, onClose, id }: any) {
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 p-2"
               >
                 <option>Choose a reason</option>
-                {
-                  role === "admin"
-                   ? [
-                        "Insufficient Inventory",
-                        "Payment Issues",
-                        "Invalid Shipping Address",
-                        "Fraud Detection",
-                        "Order Limit Exceeded",
-                        "Restricted Items",
-                        "Incomplete Information",
-                        "Technical Errors",
-                        "Verification Failure",
-                        "Customer Request",
-                        "Policy Violations",
-                        "Duplicate Orders",
-                        "Shipping Restrictions",
-                        "Excessive Returns",
-                        "Customs Issues",
-                        "Incorrect Pricing",
-                        "Promotion Abuse",
-                        "Order Modifications",
-                        "System Glitches",
-                      ].map((option: any) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))
-                    : [
+                {role === "admin"
+                  ? [
+                      "Insufficient Inventory",
+                      "Payment Issues",
+                      "Invalid Shipping Address",
+                      "Fraud Detection",
+                      "Order Limit Exceeded",
+                      "Restricted Items",
+                      "Incomplete Information",
+                      "Technical Errors",
+                      "Verification Failure",
+                      "Customer Request",
+                      "Policy Violations",
+                      "Duplicate Orders",
+                      "Shipping Restrictions",
+                      "Excessive Returns",
+                      "Customs Issues",
+                      "Incorrect Pricing",
+                      "Promotion Abuse",
+                      "Order Modifications",
+                      "System Glitches",
+                    ].map((option: any) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))
+                  : [
                       "Changed Mind",
                       "Found Cheaper Elsewhere",
                       "Order Mistake",
@@ -126,8 +131,7 @@ function PopUpForm({ isVisible, onClose, id }: any) {
                       <option key={option} value={option}>
                         {option}
                       </option>
-                    ))
-                }
+                    ))}
               </select>
             </div>
             <div>

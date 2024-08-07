@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import PopUpForm from "./popUpForm";
 
 const UserOrderList = () => {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<any>([]);
   const userId = localStorage.getItem("id");
   const socket = useSelector((store: any) => store.users.socket);
 
@@ -44,15 +44,19 @@ const UserOrderList = () => {
           setOrders([...orders]);
         }
       });
-    }
-  }, [orders]);
 
-  useEffect(() => {
-    if (socket) {
       socket.on("orderReject", (orderId: any) => {
         const updatedOrder: any = orders.find((o: any) => o.id == orderId);
         if (updatedOrder) {
           updatedOrder.status = "Rejected";
+          setOrders([...orders]);
+        }
+      });
+
+      socket.on("orderCancel", (orderId: any) => {
+        const updatedOrder: any = orders.find((o: any) => o.id == orderId);
+        if (updatedOrder) {
+          updatedOrder.status = "Cancelled";
           setOrders([...orders]);
         }
       });
@@ -69,64 +73,88 @@ const UserOrderList = () => {
         <h1 className="text-2xl text-white text-center font-bold mb-4">
           Orders
         </h1>
-        <table className="min-w-full bg-white border-slate-500">
-          <thead>
+        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+          <thead className="bg-gray-200 text-gray-700 uppercase text-sm">
             <tr>
-              <th className="py-2 px-4 border-b">Order ID</th>
-              <th className="py-2 px-4 border-b">Product Name</th>
-              <th className="py-2 px-4 border-b">Quantity</th>
-              <th className="py-2 px-4 border-b">Price</th>
-              <th className="py-2 px-4 border-b">Total amount</th>
-              <th className="py-2 px-4 border-b">Status</th>
-              <th className="py-2 px-4 border-b">Action</th>
+              <th className="py-3 px-4 border-b border-gray-300">Order ID</th>
+              <th className="py-3 px-4 border-b border-gray-300">Image</th>
+              <th className="py-3 px-4 border-b border-gray-300">
+                Product Name
+              </th>
+              <th className="py-3 px-4 border-b border-gray-300 text-center">
+                Quantity
+              </th>
+              <th className="py-3 px-4 border-b border-gray-300 text-center">
+                Price
+              </th>
+              <th className="py-3 px-4 border-b border-gray-300 text-center">
+                Total Amount
+              </th>
+              <th className="py-3 px-4 border-b border-gray-300">
+                Order Status
+              </th>
+              <th className="py-3 px-4 border-b border-gray-300">Action</th>
             </tr>
           </thead>
-          <tbody>
-            {orders.map((order: any) => (
-              <tr key={order.id}>
-                <td className="py-2 px-4 border-b text-end">{order.id}</td>
-                <td className="py-2 px-4 border-b text-center">{order.name}</td>
-                <td className="py-2 px-4 border-b text-end">
-                  {order.quantity}
-                </td>
-                <td className="py-2 px-4 border-b text-end">{order.price} $</td>
-                <td className="py-2 px-4 border-b text-end">
-                  {order.price * order.quantity} $
-                </td>
-                <td>
-                  {order.status === "Pending" ? (
-                    <div className="text-center">
-                      <span className="bg-cyan-600 text-white font-bold py-1 px-3 rounded mr-2">
-                        Pending
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      {order.status === "Accepted" ? (
-                        <span className="bg-green-500  text-center font-bold text-white py-1 px-3 rounded mr-2">
-                          Accepted
-                        </span>
-                      ) : (
-                        <span className="bg-red-500  text-center font-bold text-white py-1 px-3 rounded mr-2">
-                          Rejected
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </td>
-                <td>
-                <button
-                        onClick={() => rejectHandler(order.id)}
-                        className="bg-red-500 text-white py-1 px-3 rounded"
-                      >
-                        Reject
-                      </button>
-                </td>
+          <tbody className="text-gray-800 text-sm">
+            {orders.length === 0 ? (
+              <tr className="text-center">
+                <td>No orders found</td>
               </tr>
-            ))}
+            ) : (
+              orders.map((order: any) => (
+                <tr
+                  key={order.id}
+                  className="hover:bg-gray-50 transition duration-300"
+                >
+                  <td className="py-3 px-4 border-b border-gray-300 text-right font-medium">
+                    {order.id}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-300 text-center">
+                    <img
+                      src={`http://localhost:5000/${order.image}`}
+                      alt="Product Image"
+                      className="w-20 h-20 object-cover rounded-md"
+                    />
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-300 text-center">
+                    {order.name}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-300 text-right font-medium">
+                    {order.quantity}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-300 text-right font-medium">
+                    ${order.price}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-300 text-right font-medium">
+                    ${order.price * order.quantity}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-300 text-center">
+                    <span
+                      className={`inline-block px-3 py-1 rounded-full  text-xs font-semibold ${
+                        order.status === "Completed"
+                          ? "bg-green-200 text-green-800"
+                          : "bg-yellow-200 text-yellow-800"
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-300 text-center">
+                    <button
+                      onClick={() => rejectHandler(order.id)}
+                      className="bg-red-600 text-white text-xs font-bold py-1 px-3 rounded hover:bg-red-700 transition duration-300"
+                    >
+                      Cancel Order
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
-        <button className="bg-white p-4 m-4 rouded-xl rounded-lg">
+
+        <button className="bg-gray-700 text-white font-semibold py-2 px-4 mt-2 rounded-lg shadow-md hover:bg-gray-600 transition duration-300">
           <Link to="/user">Continue Shopping</Link>
         </button>
       </div>
@@ -137,7 +165,6 @@ const UserOrderList = () => {
           id={currentOrderId}
         />
       )}
-      );
     </>
   );
 };

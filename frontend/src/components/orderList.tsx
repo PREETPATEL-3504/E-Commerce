@@ -25,7 +25,7 @@ const OrderList = () => {
   const togglePopup = (orderId: any | null = null) => {
     setIsPopupVisible(!isPopupVisible);
     setCurrentOrderId(orderId);
-    setTrigger(!trigger)
+    setTrigger(!trigger);
   };
 
   const fetchOrders = async () => {
@@ -62,6 +62,14 @@ const OrderList = () => {
       socket.on("orderAdd", (data: any) => {
         setOrders([...orders, data]);
       });
+
+      socket.on("orderCancel", (orderId: any) => {
+        const updatedOrder: any = orders.find((o: any) => o.id == orderId);
+        if (updatedOrder) {
+          updatedOrder.status = "Cancelled";
+          setOrders([...orders]);
+        }
+      });
     }
   }, [socket, orders]);
 
@@ -71,67 +79,97 @@ const OrderList = () => {
         <h1 className="text-2xl text-white text-center font-bold mb-4">
           Orders
         </h1>
-        <table className="min-w-full bg-white border">
-          <thead>
+        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+          <thead className="bg-gray-100 text-gray-600 uppercase text-sm">
             <tr>
-              <th className="py-2 px-4 border-b">Order ID</th>
-              <th className="py-2 px-4 border-b">Product Name</th>
-              <th className="py-2 px-4 border-b">Quantity</th>
-              <th className="py-2 px-4 border-b">Price</th>
-              <th className="py-2 px-4 border-b">Total amount</th>
-              <th className="py-2 px-4 border-b">Status</th>
+              <th className="py-3 px-4 border-b border-gray-200">Order ID</th>
+              <th className="py-3 px-4 border-b border-gray-200">Image</th>
+              <th className="py-3 px-4 border-b border-gray-200">
+                Product Name
+              </th>
+              <th className="py-3 px-4 border-b border-gray-200 text-center">
+                Quantity
+              </th>
+              <th className="py-3 px-4 border-b border-gray-200 text-center">
+                Price
+              </th>
+              <th className="py-3 px-4 border-b border-gray-200 text-center">
+                Total Amount
+              </th>
+              <th className="py-3 px-4 border-b border-gray-200 text-center">
+                Status
+              </th>
             </tr>
           </thead>
-          <tbody>
-            {orders.map((order: any) => (
-              <tr key={order.id} className="">
-                <td className="py-2 px-4 border-b text-end">{order.id}</td>
-                <td className="py-2 px-4 border-b text-center">{order.name}</td>
-                <td className="py-2 px-4 border-b text-end">
-                  {order.quantity}
-                </td>
-                <td className="py-2 px-4 border-b text-end">{order.price} $</td>
-                <td className="py-2 px-4 border-b text-end">
-                  {order.price * order.quantity} $
-                </td>
-                <td className="py-2 px-4 border-b text-center">
-                  {order.status === "Pending" ? (
-                    <div className="">
-                      <button
-                        onClick={() => acceptHandler(order.id)}
-                        className="bg-green-500 text-white py-1 px-3 rounded mr-2"
+          <tbody className="text-gray-700 text-sm">
+            {
+              orders.length === 0 ? (
+                <tr className="text-center">
+                  <td>No orders found</td>
+                </tr> 
+              ) : orders.map((order: any) => (
+                <tr key={order.id} className="hover:bg-gray-50">
+                  <td className="py-3 px-4 border-b border-gray-200 text-right font-medium text-gray-900">
+                    {order.id}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-200 text-center">
+                    <img
+                      src={`http://localhost:5000/${order.image}`}
+                      alt="Product Image"
+                      className="w-20 h-20 object-cover rounded-md mx-auto"
+                    />
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-200 text-center">
+                    {order.name}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-200 text-right font-medium">
+                    {order.quantity}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-200 text-right font-medium">
+                    ${order.price}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-200 text-right font-medium text-gray-900">
+                    ${order.price * order.quantity}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-200 text-center">
+                    {order.status === "Pending" ? (
+                      <div className="flex justify-center space-x-2">
+                        <button
+                          onClick={() => acceptHandler(order.id)}
+                          className="bg-green-600 text-white text-xs font-semibold py-1 px-3 rounded-lg shadow-md hover:bg-green-700 transition"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => rejectHandler(order.id)}
+                          className="bg-red-600 text-white text-xs font-semibold py-1 px-3 rounded-lg shadow-md hover:bg-red-700 transition"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    ) : (
+                      <span
+                        className={`text-xs font-medium ${
+                          order.status === "Completed"
+                            ? "text-green-600"
+                            : "text-gray-500"
+                        }`}
                       >
-                        Accept
-                      </button>
-                      <button
-                        onClick={() => rejectHandler(order.id)}
-                        className="bg-red-500 text-white py-1 px-3 rounded"
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  ) : (
-                    <div>
-                      {order.status === "Accepted" ? (
-                        <span className="bg-green-500 text-white py-1 px-3 rounded mr-2">
-                          Accepted
-                        </span>
-                      ) : (
-                        <span className="bg-red-500 text-white py-1 px-3 rounded mr-2">
-                          Rejected
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
+                        {order.status}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            
+            
           </tbody>
         </table>
+
         <button className="mt-5">
           <Link
             to="/admin"
-            className="text-white py-2 px-4  rounded bg-blue-500 hover:bg-blue-700"
+            className="bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-600 transition duration-300"
           >
             Back to Home
           </Link>

@@ -9,7 +9,6 @@ export const ConnectSocket = () => {
   const dispatch = useDispatch();
   const id = localStorage.getItem("id");
 
-  console.log("==========================================")
 
   useEffect(() => {
     if (id) {
