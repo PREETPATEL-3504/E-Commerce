@@ -5,57 +5,56 @@ const instance = require("../payment");
 const order = require("../model/order");
 const mail = require("../services/mail");
 
-const orderAdd = async (req, res) => {
+const orderId = async (req, res) => {
+  const UserId = req.params.id;
+  const { ProductId, quantity, price, AdminId, name, image_url } = req.body;
   try {
-    const UserId = req.params.id;
-    const { ProductId, quantity, price, AdminId, name, image_url } = req.body;
-
-    try {
-      const options = {
-        amount: price,
-        currency: "INR",
-        receipt: crypto.randomBytes(10).toString("hex"),
-      };
-      instance.orders.create(options, function (err, order) {
-        res.status(200).json({ order: order });
-      });
-    } catch (error) {
-      res.status(500).json({ message: "Internal Server Error!" });
-    }
-
-    // const orderId = order.id;
-    // const query =
-    //   "INSERT INTO orders (userId, productId, quantity, price, adminid, name, orderId, paymentStatus, image) VALUES (?,?,?,?,?,?,?,?, ?)";
-    // con.query(
-    //   query,
-    //   [
-    //     UserId,
-    //     ProductId,
-    //     quantity,
-    //     price,
-    //     AdminId,
-    //     name,
-    //     orderId,
-    //     "Pending",
-    //     image_url,
-    //   ],
-    //   (err, result) => {
-    //     if (err) throw err;
-    //     const data = {
-    //       productId: ProductId,
-    //       quantity: quantity,
-    //       price: price,
-    //       name: name,
-    //       orderId: orderId,
-    //       status: "Pending",
-    //     };
-    //     io.emit("orderAdd", data);
-    //   }
-    // );
+    const options = {
+      amount: price,
+      currency: "INR",
+      receipt: crypto.randomBytes(10).toString("hex"),
+    };
+    instance.orders.create(options, function (err, order) {
+      
+      res.status(200).json({ order: order });
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error adding order" });
+    res.status(500).json({ message: "Internal Server Error!" });
   }
+};
+
+const orderAdd = async (req, res) => {
+  const UserId = req.params.id;
+  const { ProductId, quantity, price, AdminId, name, image_url } = req.body;
+  const orderId = order.id;
+  const query =
+    "INSERT INTO orders (userId, productId, quantity, price, adminid, name, orderId, paymentStatus, image) VALUES (?,?,?,?,?,?,?,?, ?)";
+  con.query(
+    query,
+    [
+      UserId,
+      ProductId,
+      quantity,
+      price,
+      AdminId,
+      name,
+      orderId,
+      "Success",
+      image_url,
+    ],
+    (err, result) => {
+      if (err) throw err;
+      const data = {
+        productId: ProductId,
+        quantity: quantity,
+        price: price,
+        name: name,
+        orderId: orderId,
+        status: "Pending",
+      };
+      io.emit("orderAdd", data);
+    }
+  );
 };
 
 const orderGet = (req, res) => {
@@ -127,4 +126,4 @@ const orderReject = (req, res) => {
   });
 };
 
-module.exports = { orderGet, orderAdd, orderAccept, orderReject, userOrder };
+module.exports = { orderGet, orderAdd, orderAccept, orderReject, userOrder, orderId };
