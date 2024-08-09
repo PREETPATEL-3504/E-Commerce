@@ -21,9 +21,7 @@ const UserOrderList = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(
-        `${env.API}order/user/${userId}`
-      );
+      const response = await axios.get(`${env.API}order/user/${userId}`);
       setOrders(response.data);
     } catch (error) {
       toast.error("Failed to fetch orders", {
@@ -143,8 +141,17 @@ const UserOrderList = () => {
                   </td>
                   <td className="py-3 px-4 border-b border-gray-300 text-center">
                     <button
+                      disabled={
+                        order.status == "Cancelled" ||
+                        order.status == "Rejected"
+                      }
                       onClick={() => rejectHandler(order.id)}
-                      className="bg-red-600 text-white text-xs font-bold py-1 px-3 rounded hover:bg-red-700 transition duration-300"
+                      className={`bg-red-600 text-white text-xs font-bold py-1 px-3 rounded hover:bg-red-700 transition duration-300 ${
+                        order.status == "Cancelled" ||
+                        order.status == "Rejected"
+                          ? "cursor-not-allowed opacity-50"
+                          : ""
+                      }`}
                     >
                       Cancel Order
                     </button>

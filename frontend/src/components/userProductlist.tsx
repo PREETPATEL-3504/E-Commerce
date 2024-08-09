@@ -109,115 +109,98 @@ const UserProductlist = () => {
 
   return (
     <>
-      <div className="container mx-auto p-4">
-        <div className="flex items-center mb-4">
-          <h1 className="text-2xl text-white text-center font-bold  ">
-            Product List
-          </h1>
-          <div className="ml-[80%] flex gap-5">
-            <button
-              onClick={() => {
-                navigate("/user-order");
-              }}
-              className="text-white font-bold"
-            >
-              Orders
-            </button>
-            <button
-              className="flex"
-              onClick={() => {
-                navigate("/cart");
-              }}
-            >
-              <span className="text-white">{itemCount}</span>
-              <IoCart className="text-3xl text-white text-center ml-[5%]" />{" "}
-            </button>
-          </div>
+        <div className="container mx-auto p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-white">Product List</h1>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => navigate("/user-order")}
+            className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+          >
+            Orders
+          </button>
+          <button
+            onClick={() => navigate("/cart")}
+            className="flex items-center bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+          >
+            <IoCart className="text-2xl" />
+            <span className="ml-2 text-lg font-semibold">{itemCount}</span>
+          </button>
         </div>
+      </div>
 
-        <table className="min-w-full border-separate border-spacing-0.5  border border-slate-500 border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border px-4 py-2">Name</th>
-              <th className="border px-4 py-2">Price</th>
-              <th className="border px-4 py-2">Quantity</th>
-              <th className="border px-4 py-2">Image</th>
-              <th className="border px-4 py-2">Description</th>
-              <th className="border px-4 py-2">Actions</th>
+      {/* Product Table */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full border-collapse bg-white shadow-md rounded-lg">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="border px-6 py-3 text-left">Name</th>
+              <th className="border px-6 py-3 text-right">Price</th>
+              <th className="border px-6 py-3 text-right">Quantity</th>
+              <th className="border px-6 py-3 text-center">Image</th>
+              <th className="border px-6 py-3">Description</th>
+              <th className="border px-6 py-3 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {products.map((product: any) => (
-              <tr key={product.id} className="bg-white text-center">
-                <td className="border px-4 py-2">{product.name}</td>
-                <td className="border px-4 py-2 text-end">{product.price} $</td>
-                <td className="border px-4 py-2 text-end">
-                  {product.quantity}
-                </td>
-                <td className="border px-4 py-2 text-center flex justify-center">
+            {products.map((product:any) => (
+              <tr key={product.id} className="border-b hover:bg-gray-50">
+                <td className="border px-6 py-4">{product.name}</td>
+                <td className="border px-6 py-4 text-right">${product.price}</td>
+                <td className="border px-6 py-4 text-right">{product.quantity}</td>
+                <td className="border px-6 py-4 text-center">
                   <img
                     src={`${env.API}${product.image_url}`}
                     alt={product.name}
-                    className="w-16 h-16 object-cover"
+                    className="w-20 h-20 object-cover rounded-md mx-auto"
                   />
                 </td>
-                <td className="border px-4 py-2">{product.description}</td>
-                <td className="border px-4 py-2">
-                  {productId.includes(product.id) ? (
-                    <button
-                      disabled
-                      className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700 cursor-not-allowed"
-                      onClick={() => {
-                        cartHandler(product);
-                      }}
-                    >
-                      <span className="font-bold">Add to Cart</span>
-                    </button>
-                  ) : (
-                    <button
-                      className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700"
-                      onClick={() => {
-                        cartHandler(product);
-                      }}
-                    >
-                      <span className="font-bold">Add to Cart</span>
-                    </button>
-                  )}
+                <td className="border px-6 py-4">{product.description}</td>
+                <td className="border px-6 py-4 text-center">
+                  <button
+                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition ${productId.includes(product.id) ? "cursor-not-allowed opacity-50" : ""}`}
+                    disabled={productId.includes(product.id)}
+                    onClick={() => cartHandler(product)}
+                  >
+                    Add to Cart
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-
-        {/* Pagination */}
-        <div className="flex justify-center mt-4">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => {
-              setCurrentPage(currentPage - 1);
-              setOffset(offset - 1);
-            }}
-            className="bg-gray-300 text-gray-700 px-2 py-1 rounded mr-2 hover:bg-gray-400"
-          >
-            <FaChevronLeft />
-          </button>
-
-          <button className="px-2 py-1 rounded mr-2  bg-blue-500 text-white">
-            {currentPage}
-          </button>
-
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() => {
-              setCurrentPage(currentPage + 1);
-              setOffset(offset + 1);
-            }}
-            className="bg-gray-300 text-gray-700 px-2 py-1 rounded hover:bg-gray-400"
-          >
-            <FaChevronRight />
-          </button>
-        </div>
       </div>
+
+      {/* Pagination */}
+      <div className="flex justify-center mt-6">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => {
+            setCurrentPage(currentPage - 1);
+            setOffset(offset - 1);
+          }}
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-l-lg hover:bg-gray-400 transition disabled:opacity-50"
+        >
+          <FaChevronLeft />
+        </button>
+
+        <button className="bg-blue-500 text-white px-4 py-2 mx-2 rounded-lg">
+          {currentPage}
+        </button>
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => {
+            setCurrentPage(currentPage + 1);
+            setOffset(offset + 1);
+          }}
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-r-lg hover:bg-gray-400 transition disabled:opacity-50"
+        >
+          <FaChevronRight />
+        </button>
+      </div>
+    </div>
     </>
   );
 };

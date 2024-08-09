@@ -8,8 +8,6 @@ import useRazorpay from "react-razorpay";
 import env from "react-dotenv";
 
 const Cart = () => {
-  console.log("------", process.env.API);
-  
   const [Razorpay] = useRazorpay();
   const [cartProduct, setCartProduct] = useState([]);
   const [count, setCount] = useState(0);
@@ -17,8 +15,21 @@ const Cart = () => {
 
   const UserId = localStorage.getItem("id");
 
+  useEffect(() => {
+    const url = `${env.API}cart/cart?UserId=${UserId}`;
+    axios.get(url).then((res: any) => {
+      setCartProduct(res.data.data);
+      const total = res.data.data.reduce(
+        (acc: any, product: any) => acc + product.price * product.quantity,
+        0
+      );
+      setCount(total);
+    });
+  }, [trigger]);
+
   const onDelete = (product: any) => {
     const id = product.id;
+
     const url = `${env.API}cart/cart/${id}`;
     axios.delete(url).then((res) => {
       toast.success("item remove successfully", {
@@ -81,8 +92,8 @@ const Cart = () => {
     }
   };
 
-  const initPay = (data: any, id: any, product:any) => {
-    const order:any = {
+  const initPay = (data: any, product: any) => {
+    const order: any = {
       userId: UserId,
       adminId: product.AdminId,
       productId: product.ProductId,
@@ -91,21 +102,26 @@ const Cart = () => {
       quantity: product.quantity,
       price: product.price,
       order_id: data.id,
-    }
-    const options = {
+    };
+    const options:any = {
       key: "rzp_test_5W5tkiV5AbJbDk",
-      amount: data.amount,
+      amount: data.amount * 100,
       currency: data.currency,
       name: data.name,
       description: "Test",
       image: data.img,
       order_id: data.id,
-      handler: async function(response: any) {        
-          toast.success("Payment Successful", {
-            autoClose: 500,
-          });
-          const orderURL = `${env.API}order/${UserId}`;
-          axios.post(orderURL, order);
+      handler: async function (response: any) {
+        const id: any = product.id;
+        toast.success("Payment Successful", {
+          autoClose: 500,
+        });
+        const orderURL = `${env.API}order/${UserId}`;
+        axios.post(orderURL, order);
+        const url = `${env.API}cart/cart/${id}`;
+        axios.delete(url);
+        setTrigger(!trigger);
+        setCartProduct(cartProduct.filter((p: any) => p.id !== product.id));
       },
       prefill: {
         name: "Anirudh Jwala",
@@ -129,11 +145,12 @@ const Cart = () => {
     setTrigger(!trigger);
   };
 
-  const handlePay = async (product: any, id: any) => {
+  const handlePay = async (product: any) => {
     try {
       const orderURL = `${env.API}order/`;
       const data: any = await axios.post(orderURL, product);
-      initPay(data.data.order, id, product);
+      initPay(data.data.order, product);
+      setTrigger(!trigger);
     } catch (error) {
       toast.error("Failed to place order", {
         autoClose: 500,
@@ -141,106 +158,102 @@ const Cart = () => {
     }
   };
 
-  useEffect(() => {
-    const url = `${env.API}cart/cart?UserId=${UserId}`;
-    axios.get(url).then((res:any) => {
-      setCartProduct(res.data.data);
-      const total = res.data.data.reduce(
-        (acc: any, product: any) => acc + product.price * product.quantity,
-        0
-      );
-      setCount(total);
-    });
-  }, [trigger]);
+
 
   return (
-    <>
+    <div className="p-6 min-h-screen">
+      {/* Cart Items */}
       {cartProduct.length !== 0 ? (
-        cartProduct.map((product: any) => (
-          <>
+        <div className="space-y-6">
+          {cartProduct.map((product: any) => (
             <div
-              className="flex items-center p-4 border border-gray-200 rounded-lg shadow-md m-4 bg-white"
+              className="flex items-center p-4 border border-gray-300 rounded-lg shadow-md bg-white"
               key={product.id}
             >
+              {/* Product Image */}
               <img
-                src={`process.env.${product.image_url}`}
-                alt="Image"
+                src={`${env.API}${product.image_url}`}
+                alt={product.name}
                 className="w-24 h-24 object-cover rounded-md mr-4"
               />
+              {/* Product Details */}
               <div className="flex-grow">
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-gray-900">
                   {product.name}
                 </h2>
                 <p className="text-gray-600">ID: {product.ProductId}</p>
-                <p className="text-gray-700 mt-1">Price: {product.price} $</p>
-
-                <p className="text-gray-700 mt-1 flex gap-2 items-center">
-                  Quantity:{" "}
+                <p className="text-gray-700 mt-1">Price: ${product.price}</p>
+                <div className="flex items-center mt-2">
+                  <p className="text-gray-700">Quantity:</p>
                   <button
-                    disabled={product.quantity == 1}
-                    className={
-                      product.quantity === 1 ? "cursor-not-allowed" : ""
-                    }
-                    onClick={() => {
-                      removeHandler(product);
-                    }}
+                    disabled={product.quantity === 1}
+                    className={`ml-2 px-2 py-1 bg-gray-300 rounded-md ${
+                      product.quantity === 1
+                        ? "cursor-not-allowed"
+                        : "hover:bg-gray-400"
+                    } transition`}
+                    onClick={() => removeHandler(product)}
                   >
                     <TiMinus />
                   </button>
-                  {product.quantity}
+                  <span className="mx-2">{product.quantity}</span>
                   <button
-                    disabled={product.quantity == 10}
-                    className={
-                      product.quantity === 10 ? "cursor-not-allowed" : ""
-                    }
-                    onClick={() => {
-                      addHandler(product);
-                    }}
+                    disabled={product.quantity === 10}
+                    className={`ml-2 px-2 py-1 bg-gray-300 rounded-md ${
+                      product.quantity === 10
+                        ? "cursor-not-allowed"
+                        : "hover:bg-gray-400"
+                    } transition`}
+                    onClick={() => addHandler(product)}
                   >
                     <TiPlus />
                   </button>
-                </p>
-                <p className="text-gray-500 mt-1">{product.description}</p>
+                </div>
+                <p className="text-gray-500 mt-2">{product.description}</p>
               </div>
-
+              {/* Action Buttons and Total */}
               <div className="ml-4 flex flex-col items-center">
                 <button
-                  onClick={() => handlePay(product, product.id)}
-                  className="bg-blue-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
+                  onClick={() => handlePay(product)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 w-full mb-2 transition"
                 >
                   Buy
                 </button>
                 <button
                   onClick={() => onDelete(product)}
-                  className="bg-red-500 w-full text-white px-4 py-2 rounded-lg shadow mt-2 hover:bg-red-600"
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 w-full transition"
                 >
                   Delete
                 </button>
-                <div className="mt-2">
-                  <span className="font-bold">Total:</span>
-                  <span className="ml-1">
-                    {product.quantity * product.price} $
-                  </span>
+                <div className="mt-2 text-gray-700">
+                  <span className="font-semibold">Total:</span> $
+                  {product.quantity * product.price}
                 </div>
               </div>
             </div>
-            <div className="font-bold text-black ml-4 bg-white rounded-lg p-2 mr-4 text-end">
-              <span className="p-2">Total: {count} $</span>
-            </div>
-          </>
-        ))
-      ) : (
-        <>
-          <div className="flex justify-center items-center mt-[15%] ">
-            <h1 className="text-5xl text-white">Your cart is empty</h1>
+          ))}
+          {/* Cart Summary */}
+          <div className="text-right mt-6">
+            <span className="text-2xl font-bold text-white">
+              Total: $ {count}
+            </span>
           </div>
-        </>
+        </div>
+      ) : (
+        <div className="flex justify-center items-center mt-20">
+          <h1 className="text-4xl text-white">Your cart is empty</h1>
+        </div>
       )}
 
-      <button className="bg-white p-4 m-4 rouded-xl rounded-lg">
-        <Link to="/user">Continue Shopping</Link>
-      </button>
-    </>
+      {/* Continue Shopping Button */}
+      <div className="flex justify-center mt-8">
+        <Link to="/user">
+          <button className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-600 transition">
+            Continue Shopping
+          </button>
+        </Link>
+      </div>
+    </div>
   );
 };
 

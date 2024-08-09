@@ -43,8 +43,15 @@ const orderAdd = async (req, res) => {
     (err, result) => {
       if (err) throw err;
       if (result) {
-        console.log("----------------", result);
-        
+        const query = "SELECT email FROM users WHERE id = ?";
+        con.query(query, [UserId], (err, result) => {
+          if (err) throw err;
+          const emailTo = result[0].email;
+          const subject = "Order Placed Successfully"
+          const body = "Congratulations your order placed successfully. Visit again later!" 
+          mail(emailTo, subject, body);
+        });
+
         const data = {
           productId: productId,
           quantity: quantity,

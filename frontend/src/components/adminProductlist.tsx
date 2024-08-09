@@ -56,66 +56,86 @@ const AdminProductlist = () => {
 
   return (
     <div className="container bg-black-300 mx-auto p-4 h-full">
-      <h1 className="text-2xl text-white text-center font-bold mb-4">
+      <h1 className="text-3xl font-bold text-white mb-6 text-center">
         Product List
       </h1>
 
-      <table className="w-full  border border-gray rounded-3xl p-9 mb-5">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border px-4 py-2">Name</th>
-            <th className="border px-4 py-2">Price</th>
-            <th className="border px-4 py-2">Quantity</th>
-            <th className="border px-4 py-2">Image</th>
-            <th className="border px-4 py-2">Description</th>
-            <th className="border px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product: any) => (
-            <tr key={product.id} className="bg-white">
-              <td className="border px-4 py-2 text-center">{product.name}</td>
-              <td className="border px-4 py-2 text-end">{product.price} $</td>
-              <td className="border px-4 py-2 text-end">{product.quantity}</td>
-              <td className="border px-4 py-2 text-center flex justify-center">
-                <img
-                  src={`${env.API}${product.image_url}`}
-                  alt="image"
-                  className="w-16 h-16 object-cover"
-                />
-              </td>
-              <td className="border px-4 py-2 text-center">
-                {product.description}
-              </td>
-              <td className="border px-4 py-2 text-center">
-                <button className="bg-blue-500 text-white px-4 py-2 rounded mr-2">
-                  <Link to={`/add-product/${product.id}`}>Edit</Link>
-                </button>
-                <button
-                  onClick={() => onDelete(product.id)}
-                  className="bg-red-500 text-white px-4 py-2 rounded "
-                >
-                  Delete
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="py-3 px-4 text-left font-semibold text-gray-600">
+                Name
+              </th>
+              <th className="py-3 px-4 text-left font-semibold text-gray-600">
+                Price
+              </th>
+              <th className="py-3 px-4 text-left font-semibold text-gray-600">
+                Quantity
+              </th>
+              <th className="py-3 px-4 text-left font-semibold text-gray-600">
+                Image
+              </th>
+              <th className="py-3 px-4 text-left font-semibold text-gray-600">
+                Description
+              </th>
+              <th className="py-3 px-4 text-center font-semibold text-gray-600">
+                Actions
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {products.map((product: any) => (
+              <tr key={product.id} className="border-b hover:bg-gray-50">
+                <td className="py-4 px-4 text-gray-700">{product.name}</td>
+                <td className="py-4 px-4 text-gray-700 text-right">
+                  ${product.price}
+                </td>
+                <td className="py-4 px-4 text-gray-700 text-right">
+                  {product.quantity}
+                </td>
+                <td className="py-4 px-4 flex justify-center">
+                  <img
+                    src={`${env.API}${product.image_url}`}
+                    alt={product.name}
+                    className="w-16 h-16 object-cover rounded"
+                  />
+                </td>
+                <td className="py-4 px-4 text-gray-700">
+                  {product.description}
+                </td>
+                <td className="py-4 px-4 text-center">
+                  <Link to={`/add-product/${product.id}`}>
+                    <button className="bg-blue-600 text-white px-3 py-1 rounded-lg mr-2 hover:bg-blue-700 transition">
+                      Edit
+                    </button>
+                  </Link>
+                  <button
+                    onClick={() => onDelete(product.id)}
+                    className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center mt-6">
         <button
           disabled={currentPage === 1}
           onClick={() => {
             setCurrentPage(currentPage - 1);
             setOffset(offset - 1);
           }}
-          className="bg-gray-300 text-gray-700 px-2 py-1 rounded mr-2 hover:bg-gray-400"
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-l-lg hover:bg-gray-400 transition disabled:opacity-50"
         >
           <FaChevronLeft />
         </button>
 
-        <button className="px-2 py-1 rounded mr-2  bg-blue-500 text-white">
+        <button className="bg-blue-500 text-white px-4 py-2 mx-2 rounded-lg">
           {currentPage}
         </button>
 
@@ -125,7 +145,7 @@ const AdminProductlist = () => {
             setCurrentPage(currentPage + 1);
             setOffset(offset + 1);
           }}
-          className="bg-gray-300 text-gray-700 px-2 py-1 rounded hover:bg-gray-400"
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-r-lg hover:bg-gray-400 transition disabled:opacity-50"
         >
           <FaChevronRight />
         </button>

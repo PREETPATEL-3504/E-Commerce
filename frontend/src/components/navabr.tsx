@@ -23,7 +23,7 @@ const Navbar = ({ setIsLoggedIn }: any) => {
       <header className="text-white">
         <nav className="container mx-auto px-4 py-2 flex justify-between items-center">
           <Link to="#" className="font-bold text-xl">
-            My Brand
+            E-Commerce
           </Link>
           <ul className="flex space-x-4">
             <li>

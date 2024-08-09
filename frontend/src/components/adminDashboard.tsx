@@ -14,20 +14,29 @@ const AdminDashboard = () => {
   };
   return (
     <>
-      <div className="text-3xl text-white text-center">Admin Dashboard</div>
-      <button
-        className="bg-[#292929] border-2 border-[#3e3e3e] rounded-lg text-white px-6 py-3 text-base hover:border-[#fff] cursor-pointer transition"
-        onClick={Addhandler}
-      >
-        Add Products
-      </button>
-      <button
-        className="bg-[#292929] border-2 border-[#3e3e3e] rounded-lg text-white px-6 py-3 ml-4 text-base hover:border-[#fff] cursor-pointer transition"
-        onClick={orderhandler}
-      >
-        Orders
-      </button>
-      <AdminProductlist/>
+      <div className="p-6 bg-gray-800 flex flex-col">
+      <div className="flex justify-between items-center">
+        <div className="flex-1 flex justify-center">
+          <div className="text-4xl font-bold text-white">Admin Dashboard</div>
+        </div>
+        <div className="flex space-x-4">
+          <button
+            className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+            onClick={Addhandler}
+          >
+            Add Products
+          </button>
+
+          <button
+            className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+            onClick={orderhandler}
+          >
+            Orders
+          </button>
+        </div>
+      </div>
+    </div>
+      <AdminProductlist />
     </>
   );
 };
