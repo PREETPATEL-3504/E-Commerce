@@ -6,8 +6,7 @@ const order = require("../model/order");
 const mail = require("../services/mail");
 
 const orderId = async (req, res) => {
-  const UserId = req.params.id;
-  const { ProductId, quantity, price, AdminId, name, image_url } = req.body;
+  const { price } = req.body;
   try {
     const options = {
       amount: price,
@@ -24,7 +23,8 @@ const orderId = async (req, res) => {
 
 const orderAdd = async (req, res) => {
   const UserId = req.params.id;
-  const { productId, quantity, price, adminId, name, image_url, order_id } = req.body;
+  const { productId, quantity, price, adminId, name, image_url, order_id } =
+    req.body;
   const query =
     "INSERT INTO orders (userId, productId, quantity, price, adminid, name, orderId, paymentStatus, image) VALUES (?,?,?,?,?,?,?,?, ?)";
   con.query(
@@ -47,8 +47,9 @@ const orderAdd = async (req, res) => {
         con.query(query, [UserId], (err, result) => {
           if (err) throw err;
           const emailTo = result[0].email;
-          const subject = "Order Placed Successfully"
-          const body = "Congratulations your order placed successfully. Visit again later!" 
+          const subject = "Order Placed Successfully";
+          const body =
+            "Congratulations your order placed successfully. Visit again later!";
           mail(emailTo, subject, body);
         });
 
@@ -69,9 +70,12 @@ const orderAdd = async (req, res) => {
 
 const orderGet = (req, res) => {
   const userId = req.params.id;
-  const query = "SELECT * FROM orders WHERE adminId = ? AND paymentStatus = ?";
+  const query =
+    "SELECT orders.*, users.*  FROM orders INNER JOIN users ON users.id = orders.userId WHERE orders.adminId = ? AND orders.paymentStatus = ?";
   con.query(query, [userId, "Success"], (err, result) => {
-    if (err) return res.status(500).json(err);
+    if (err) {
+      return res.status(500).json(err);
+    }
     res.status(200).json(result);
   });
 };

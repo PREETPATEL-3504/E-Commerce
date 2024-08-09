@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useAppSelector } from "../store/hooks";
+import { useAppSelector } from "../../store/hooks";
 
 const Navbar = ({ setIsLoggedIn }: any) => {
   const socket = useAppSelector((store) => store.users.socket);

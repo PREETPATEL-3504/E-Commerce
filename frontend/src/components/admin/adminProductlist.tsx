@@ -2,8 +2,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useAppDispatch } from "../store/hooks";
-import { setProductList } from "../store/reducers/productList";
+import { useAppDispatch } from "../../store/hooks";
+import { setProductList } from "../../store/reducers/productList";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import env from "react-dotenv";
 

@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import PopUpForm from "./popUpForm";
+import PopUpForm from "../common/popUpForm";
 import env from "react-dotenv";
 
 const OrderList = () => {
@@ -20,9 +20,28 @@ const OrderList = () => {
   const [trigger, setTrigger] = useState(true);
   const userId = localStorage.getItem("id");
   const socket = useSelector((store: any) => store.users.socket);
-
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(null);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [trigger, socket, orders]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("orderAdd", (data: any) => {
+        setOrders([...orders, data]);
+      });
+
+      socket.on("orderCancel", (orderId: any) => {
+        const updatedOrder: any = orders.find((o: any) => o.id == orderId);
+        if (updatedOrder) {
+          updatedOrder.status = "Cancelled";
+          setOrders([...orders]);
+        }
+      });
+    }
+  }, [socket, orders]);
 
   const togglePopup = (orderId: any | null = null) => {
     setIsPopupVisible(!isPopupVisible);
@@ -41,10 +60,6 @@ const OrderList = () => {
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, [trigger, socket, orders]);
-
   const rejectHandler = (id: any) => {
     togglePopup(id);
   };
@@ -59,22 +74,6 @@ const OrderList = () => {
     });
   };
 
-  useEffect(() => {
-    if (socket) {
-      socket.on("orderAdd", (data: any) => {
-        setOrders([...orders, data]);
-      });
-
-      socket.on("orderCancel", (orderId: any) => {
-        const updatedOrder: any = orders.find((o: any) => o.id == orderId);
-        if (updatedOrder) {
-          updatedOrder.status = "Cancelled";
-          setOrders([...orders]);
-        }
-      });
-    }
-  }, [socket, orders]);
-
   return (
     <>
       <div className="container mx-auto p-4">
@@ -86,6 +85,9 @@ const OrderList = () => {
             <tr>
               <th className="py-3 px-4 border-b border-gray-200">Order ID</th>
               <th className="py-3 px-4 border-b border-gray-200">Image</th>
+              <th className="py-3 px-4 border-b border-gray-200">
+                Customer name
+              </th>
               <th className="py-3 px-4 border-b border-gray-200">
                 Product Name
               </th>
@@ -104,12 +106,12 @@ const OrderList = () => {
             </tr>
           </thead>
           <tbody className="text-gray-700 text-sm">
-            {
-              orders.length === 0 ? (
-                <tr className="text-center">
-                  <td>No orders found</td>
-                </tr> 
-              ) : orders.map((order: any) => (
+            {orders.length === 0 ? (
+              <tr className="text-center">
+                <td>No orders found</td>
+              </tr>
+            ) : (
+              orders.map((order: any) => (
                 <tr key={order.id} className="hover:bg-gray-50">
                   <td className="py-3 px-4 border-b border-gray-200 text-right font-medium text-gray-900">
                     {order.id}
@@ -120,6 +122,9 @@ const OrderList = () => {
                       alt="Product Image"
                       className="w-20 h-20 object-cover rounded-md mx-auto"
                     />
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-200 text-center">
+                    {order.first_name} {order.last_name} 
                   </td>
                   <td className="py-3 px-4 border-b border-gray-200 text-center">
                     {order.name}
@@ -162,9 +167,8 @@ const OrderList = () => {
                     )}
                   </td>
                 </tr>
-              ))}
-            
-            
+              ))
+            )}
           </tbody>
         </table>
 

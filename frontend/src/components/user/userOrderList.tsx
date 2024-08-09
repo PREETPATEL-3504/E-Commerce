@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import PopUpForm from "./popUpForm";
+import PopUpForm from "../common/popUpForm";
 import env from "react-dotenv";
 
 const UserOrderList = () => {

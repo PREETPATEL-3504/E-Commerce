@@ -1,19 +1,19 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import "./App.css";
-import Login from "./components/login";
-import Signup from "./components/signup";
-import Navbar from "./components/navabr";
-import Home from "./components/adminDashboard";
+import Login from "./components/auth/login";
+import Signup from "./components/auth/signup";
+import Navbar from "./components/common/navabr";
+import Home from "./components/admin/adminDashboard";
 import { useEffect, useState } from "react";
-import AdminDashboard from "./components/adminDashboard";
-import UserDashboard from "./components/userDashboard";
-import AddProducts from "./components/addProducts";
-import Cart from "./components/cart";
+import AdminDashboard from "./components/admin/adminDashboard";
+import UserDashboard from "./components/user/userDashboard";
+import AddProducts from "./components/admin/addProducts";
+import Cart from "./components/user/userCart";
 import io from "socket.io-client";
 import { useAppDispatch } from "./store/hooks";
 import { setSocket } from "./store/reducers/userSlice";
-import OrderList from "./components/orderList";
-import UserOrderList from "./components/userOrderList";
+import OrderList from "./components/admin/adminOrderList";
+import UserOrderList from "./components/user/userOrderList";
 
 function App() {
   const ENDPOINT = "http://localhost:5000";
