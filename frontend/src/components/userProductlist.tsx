@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setProductList } from "../store/reducers/productList";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import env from "react-dotenv";
 
 const UserProductlist = () => {
   const [products, setProducts] = useState<any>([]);
@@ -55,7 +56,7 @@ const UserProductlist = () => {
   }, [socket, products]);
 
   useEffect(() => {
-    const url = `http://localhost:5000/product/products?offset=${
+    const url = `${env.API}product/products?offset=${
       offset * itemsPerPage
     }&limit=${itemsPerPage}`;
     axios
@@ -74,7 +75,7 @@ const UserProductlist = () => {
 
   const cartHandler = (item: any) => {
     try {
-      const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
+      const url = `${env.API}cart/cart?UserId=${UserId}`;
       axios.post(url, item).then((res) => {
         toast.success("Add to cart successfully", {
           autoClose: 1000,
@@ -90,7 +91,7 @@ const UserProductlist = () => {
   };
 
   useEffect(() => {
-    const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
+    const url = `${env.API}cart/cart?UserId=${UserId}`;
     axios.get(url).then((res) => {
       const p_id = res.data.data;
       for (let i = 0; i < p_id.length; i++) {
@@ -100,7 +101,7 @@ const UserProductlist = () => {
   }, [itemAdd]);
 
   useEffect(() => {
-    const url = `http://localhost:5000/cart/cart/count?UserId=${UserId}`;
+    const url = `${env.API}cart/cart/count?UserId=${UserId}`;
     axios.get(url).then((res) => {
       setItemCount(res.data.data);
     });
@@ -155,7 +156,7 @@ const UserProductlist = () => {
                 </td>
                 <td className="border px-4 py-2 text-center flex justify-center">
                   <img
-                    src={`http://localhost:5000/${product.image_url}`}
+                    src={`${env.API}${product.image_url}`}
                     alt={product.name}
                     className="w-16 h-16 object-cover"
                   />

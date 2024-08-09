@@ -15,7 +15,6 @@ const orderId = async (req, res) => {
       receipt: crypto.randomBytes(10).toString("hex"),
     };
     instance.orders.create(options, function (err, order) {
-      
       res.status(200).json({ order: order });
     });
   } catch (error) {
@@ -25,34 +24,38 @@ const orderId = async (req, res) => {
 
 const orderAdd = async (req, res) => {
   const UserId = req.params.id;
-  const { ProductId, quantity, price, AdminId, name, image_url } = req.body;
-  const orderId = order.id;
+  const { productId, quantity, price, adminId, name, image_url, order_id } = req.body;
   const query =
     "INSERT INTO orders (userId, productId, quantity, price, adminid, name, orderId, paymentStatus, image) VALUES (?,?,?,?,?,?,?,?, ?)";
   con.query(
     query,
     [
       UserId,
-      ProductId,
+      productId,
       quantity,
       price,
-      AdminId,
+      adminId,
       name,
-      orderId,
+      order_id,
       "Success",
       image_url,
     ],
     (err, result) => {
       if (err) throw err;
-      const data = {
-        productId: ProductId,
-        quantity: quantity,
-        price: price,
-        name: name,
-        orderId: orderId,
-        status: "Pending",
-      };
-      io.emit("orderAdd", data);
+      if (result) {
+        console.log("----------------", result);
+        
+        const data = {
+          productId: productId,
+          quantity: quantity,
+          price: price,
+          name: name,
+          orderId: order_id,
+          status: "Pending",
+          image: image_url,
+        };
+        io.emit("orderAdd", data);
+      }
     }
   );
 };
@@ -126,4 +129,11 @@ const orderReject = (req, res) => {
   });
 };
 
-module.exports = { orderGet, orderAdd, orderAccept, orderReject, userOrder, orderId };
+module.exports = {
+  orderGet,
+  orderAdd,
+  orderAccept,
+  orderReject,
+  userOrder,
+  orderId,
+};

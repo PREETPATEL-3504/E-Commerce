@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import PopUpForm from "./popUpForm";
+import env from "react-dotenv";
 
 const UserOrderList = () => {
   const [orders, setOrders] = useState<any>([]);
@@ -21,7 +22,7 @@ const UserOrderList = () => {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/order/user/${userId}`
+        `${env.API}order/user/${userId}`
       );
       setOrders(response.data);
     } catch (error) {
@@ -112,7 +113,7 @@ const UserOrderList = () => {
                   </td>
                   <td className="py-3 px-4 border-b border-gray-300 text-center">
                     <img
-                      src={`http://localhost:5000/${order.image}`}
+                      src={`${env.API}${order.image}`}
                       alt="Product Image"
                       className="w-20 h-20 object-cover rounded-md"
                     />

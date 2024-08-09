@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import env from "react-dotenv";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -21,7 +22,7 @@ const AddProducts = () => {
 
   useEffect(() => {
     const fetchdata = async () => {
-      const url = `http://localhost:5000/product/products/${id}`;
+      const url = `${env.API}product/products/${id}`;
       const res = await axios.get(url, {
         headers: {
           Authorization: token,
@@ -47,7 +48,7 @@ const AddProducts = () => {
     e.preventDefault();
     if (id) {
       try {
-        const url = `http://localhost:5000/product/products/${id}`;
+        const url = `${env.API}product/products/${id}`;
         const res = await axios.patch(url, data, {
           headers: {
             Authorization: token,
@@ -72,7 +73,7 @@ const AddProducts = () => {
         formdata.append("image_url", data.image_url);
         formdata.append("AdminId", String(AdminId));
 
-        const url = "http://localhost:5000/product/products";
+        const url = `${env.API}product/products`;
         const res = await axios.post(url, formdata, {
           headers: {
             Authorization: token,

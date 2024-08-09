@@ -5,8 +5,11 @@ import { toast } from "react-toastify";
 import { TiPlus } from "react-icons/ti";
 import { TiMinus } from "react-icons/ti";
 import useRazorpay from "react-razorpay";
+import env from "react-dotenv";
 
 const Cart = () => {
+  console.log("------", process.env.API);
+  
   const [Razorpay] = useRazorpay();
   const [cartProduct, setCartProduct] = useState([]);
   const [count, setCount] = useState(0);
@@ -16,7 +19,7 @@ const Cart = () => {
 
   const onDelete = (product: any) => {
     const id = product.id;
-    const url = `http://localhost:5000/cart/cart/${id}`;
+    const url = `${env.API}cart/cart/${id}`;
     axios.delete(url).then((res) => {
       toast.success("item remove successfully", {
         autoClose: 1000,
@@ -29,7 +32,7 @@ const Cart = () => {
   const addHandler = (item: any) => {
     const id = item["ProductId"];
     try {
-      const url = `http://localhost:5000/cart/cart/add/${id}?UserId=${UserId}`;
+      const url = `${env.API}cart/cart/add/${id}?UserId=${UserId}`;
       axios
         .put(url, { quantity: item.quantity + 1 })
         .then((res) => {
@@ -55,7 +58,7 @@ const Cart = () => {
   const removeHandler = (item: any) => {
     const id = item["ProductId"];
     try {
-      const url = `http://localhost:5000/cart/cart/remove/${id}?UserId=${UserId}`;
+      const url = `${env.API}cart/cart/remove/${id}?UserId=${UserId}`;
       axios
         .put(url, { quantity: item.quantity + 1 })
         .then((res) => {
@@ -79,8 +82,16 @@ const Cart = () => {
   };
 
   const initPay = (data: any, id: any, product:any) => {
-    const order:any = product
-    
+    const order:any = {
+      userId: UserId,
+      adminId: product.AdminId,
+      productId: product.ProductId,
+      name: product.name,
+      image_url: product.image_url,
+      quantity: product.quantity,
+      price: product.price,
+      order_id: data.id,
+    }
     const options = {
       key: "rzp_test_5W5tkiV5AbJbDk",
       amount: data.amount,
@@ -93,9 +104,8 @@ const Cart = () => {
           toast.success("Payment Successful", {
             autoClose: 500,
           });
-          const orderURL = `http://localhost:5000/order/${UserId}`;
-          const data: any = await axios.post(orderURL, order);
-          
+          const orderURL = `${env.API}order/${UserId}`;
+          axios.post(orderURL, order);
       },
       prefill: {
         name: "Anirudh Jwala",
@@ -121,7 +131,7 @@ const Cart = () => {
 
   const handlePay = async (product: any, id: any) => {
     try {
-      const orderURL = `http://localhost:5000/order/`;
+      const orderURL = `${env.API}order/`;
       const data: any = await axios.post(orderURL, product);
       initPay(data.data.order, id, product);
     } catch (error) {
@@ -132,8 +142,8 @@ const Cart = () => {
   };
 
   useEffect(() => {
-    const url = `http://localhost:5000/cart/cart?UserId=${UserId}`;
-    axios.get(url).then((res) => {
+    const url = `${env.API}cart/cart?UserId=${UserId}`;
+    axios.get(url).then((res:any) => {
       setCartProduct(res.data.data);
       const total = res.data.data.reduce(
         (acc: any, product: any) => acc + product.price * product.quantity,
@@ -153,7 +163,7 @@ const Cart = () => {
               key={product.id}
             >
               <img
-                src={`http://localhost:5000/${product.image_url}`}
+                src={`process.env.${product.image_url}`}
                 alt="Image"
                 className="w-24 h-24 object-cover rounded-md mr-4"
               />

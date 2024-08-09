@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import env from "react-dotenv"
 
 const Login = ({ setIsLoggedIn }: any) => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Login = ({ setIsLoggedIn }: any) => {
     e.preventDefault();
 
     try {
-      const url = "http://localhost:5000/user/user-login";
+      const url = `${env.API}user/user-login`;
       const res = await axios.post(url, data);
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);

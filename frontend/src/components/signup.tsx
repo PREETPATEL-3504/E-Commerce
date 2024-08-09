@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import env from "react-dotenv";
 import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
@@ -24,7 +25,7 @@ const Signup = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const url = "http://localhost:5000/user/register";
+      const url = `${env.API}user/register`;
       const res = await axios.post(url, data);
       if (res.status === 200) {
         alert("User created successfully");

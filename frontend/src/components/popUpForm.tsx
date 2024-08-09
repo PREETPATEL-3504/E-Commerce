@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import env from "react-dotenv";
 import { toast } from "react-toastify";
 
 function PopUpForm({ isVisible, onClose, id }: any) {
@@ -17,7 +18,7 @@ function PopUpForm({ isVisible, onClose, id }: any) {
   };
 
   const sendMail = (): any => {
-    const url = `http://localhost:5000/order/reject/${id}`;
+    const url = `${env.API}order/reject/${id}`;
     const data = { reason: reason.reason, comment: reason.comment, role: role};
 
     axios

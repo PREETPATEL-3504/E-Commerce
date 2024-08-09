@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import PopUpForm from "./popUpForm";
+import env from "react-dotenv";
 
 const OrderList = () => {
   interface Order {
@@ -12,6 +13,7 @@ const OrderList = () => {
     quantity: number;
     price: number;
     status: string;
+    image_url: any;
   }
 
   const [orders, setOrders] = useState<Order[]>([]);
@@ -30,7 +32,7 @@ const OrderList = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/order/${userId}`);
+      const response = await axios.get(`${env.API}order/${userId}`);
       setOrders(response.data);
     } catch (error) {
       toast.error("Failed to fetch orders", {
@@ -41,14 +43,14 @@ const OrderList = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [trigger]);
+  }, [trigger, socket, orders]);
 
   const rejectHandler = (id: any) => {
     togglePopup(id);
   };
 
   const acceptHandler = (id: any) => {
-    const url = `http://localhost:5000/order/accept/${id}`;
+    const url = `${env.API}order/accept/${id}`;
     axios.patch(url).then((res) => {
       toast.success("Order accepted successfully", {
         autoClose: 1000,
@@ -114,7 +116,7 @@ const OrderList = () => {
                   </td>
                   <td className="py-3 px-4 border-b border-gray-200 text-center">
                     <img
-                      src={`http://localhost:5000/${order.image}`}
+                      src={`${env.API}${order.image}`}
                       alt="Product Image"
                       className="w-20 h-20 object-cover rounded-md mx-auto"
                     />

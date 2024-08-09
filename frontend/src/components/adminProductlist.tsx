@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useAppDispatch } from "../store/hooks";
 import { setProductList } from "../store/reducers/productList";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import env from "react-dotenv";
 
 const AdminProductlist = () => {
   const [products, setProducts] = useState([]);
@@ -19,7 +20,7 @@ const AdminProductlist = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const url = `http://localhost:5000/product/products?offset=${
+    const url = `${env.API}product/products?offset=${
       offset * itemsPerPage
     }&limit=${itemsPerPage}&AdminId=${adminid}`;
     axios
@@ -39,7 +40,7 @@ const AdminProductlist = () => {
   //Products Delete Api
   const onDelete = (id: any) => {
     axios
-      .delete(`http://localhost:5000/product/products/${id}`, {
+      .delete(`${env.API}product/products/${id}`, {
         headers: { Authorization: token },
       })
       .then(() => {
@@ -78,7 +79,7 @@ const AdminProductlist = () => {
               <td className="border px-4 py-2 text-end">{product.quantity}</td>
               <td className="border px-4 py-2 text-center flex justify-center">
                 <img
-                  src={`http://localhost:5000/${product.image_url}`}
+                  src={`${env.API}${product.image_url}`}
                   alt="image"
                   className="w-16 h-16 object-cover"
                 />
