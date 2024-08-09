@@ -22,7 +22,7 @@ const AddProducts = () => {
 
   useEffect(() => {
     const fetchdata = async () => {
-      const url = `${env.API}product/products/${id}`;
+      const url = `${process.env.REACT_APP_API_URL}product/products/${id}`;
       const res = await axios.get(url, {
         headers: {
           Authorization: token,
@@ -48,7 +48,7 @@ const AddProducts = () => {
     e.preventDefault();
     if (id) {
       try {
-        const url = `${env.API}product/products/${id}`;
+        const url = `${process.env.REACT_APP_API_URL}product/products/${id}`;
         const res = await axios.patch(url, data, {
           headers: {
             Authorization: token,
@@ -73,7 +73,7 @@ const AddProducts = () => {
         formdata.append("image_url", data.image_url);
         formdata.append("AdminId", String(AdminId));
 
-        const url = `${env.API}product/products`;
+        const url = `${process.env.REACT_APP_API_URL}product/products`;
         const res = await axios.post(url, formdata, {
           headers: {
             Authorization: token,

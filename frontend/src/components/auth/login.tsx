@@ -20,7 +20,7 @@ const Login = ({ setIsLoggedIn }: any) => {
     e.preventDefault();
 
     try {
-      const url = `${env.API}user/user-login`;
+      const url = `${process.env.REACT_APP_API_URL}user/user-login`;
       const res = await axios.post(url, data);
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);

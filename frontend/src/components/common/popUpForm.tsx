@@ -18,7 +18,7 @@ function PopUpForm({ isVisible, onClose, id }: any) {
   };
 
   const sendMail = (): any => {
-    const url = `${env.API}order/reject/${id}`;
+    const url = `${process.env.REACT_APP_API_URL}order/reject/${id}`;
     const data = { reason: reason.reason, comment: reason.comment, role: role};
 
     axios

@@ -16,7 +16,7 @@ const Cart = () => {
   const UserId = localStorage.getItem("id");
 
   useEffect(() => {
-    const url = `${env.API}cart/cart?UserId=${UserId}`;
+    const url = `${process.env.REACT_APP_API_URL}cart/cart?UserId=${UserId}`;
     axios.get(url).then((res: any) => {
       setCartProduct(res.data.data);
       const total = res.data.data.reduce(
@@ -30,7 +30,7 @@ const Cart = () => {
   const onDelete = (product: any) => {
     const id = product.id;
 
-    const url = `${env.API}cart/cart/${id}`;
+    const url = `${process.env.REACT_APP_API_URL}cart/cart/${id}`;
     axios.delete(url).then((res) => {
       toast.success("item remove successfully", {
         autoClose: 1000,
@@ -43,7 +43,7 @@ const Cart = () => {
   const addHandler = (item: any) => {
     const id = item["ProductId"];
     try {
-      const url = `${env.API}cart/cart/add/${id}?UserId=${UserId}`;
+      const url = `${process.env.REACT_APP_API_URL}cart/cart/add/${id}?UserId=${UserId}`;
       axios
         .put(url, { quantity: item.quantity + 1 })
         .then((res) => {
@@ -69,7 +69,7 @@ const Cart = () => {
   const removeHandler = (item: any) => {
     const id = item["ProductId"];
     try {
-      const url = `${env.API}cart/cart/remove/${id}?UserId=${UserId}`;
+      const url = `${process.env.REACT_APP_API_URL}cart/cart/remove/${id}?UserId=${UserId}`;
       axios
         .put(url, { quantity: item.quantity + 1 })
         .then((res) => {
@@ -116,9 +116,9 @@ const Cart = () => {
         toast.success("Payment Successful", {
           autoClose: 500,
         });
-        const orderURL = `${env.API}order/${UserId}`;
+        const orderURL = `${process.env.REACT_APP_API_URL}order/${UserId}`;
         axios.post(orderURL, order);
-        const url = `${env.API}cart/cart/${id}`;
+        const url = `${process.env.REACT_APP_API_URL}cart/cart/${id}`;
         axios.delete(url);
         setTrigger(!trigger);
         setCartProduct(cartProduct.filter((p: any) => p.id !== product.id));
@@ -147,7 +147,7 @@ const Cart = () => {
 
   const handlePay = async (product: any) => {
     try {
-      const orderURL = `${env.API}order/`;
+      const orderURL = `${process.env.REACT_APP_API_URL}order/`;
       const data: any = await axios.post(orderURL, product);
       initPay(data.data.order, product);
       setTrigger(!trigger);
@@ -172,7 +172,7 @@ const Cart = () => {
             >
               {/* Product Image */}
               <img
-                src={`${env.API}${product.image_url}`}
+                src={`${process.env.REACT_APP_API_URL}${product.image_url}`}
                 alt={product.name}
                 className="w-24 h-24 object-cover rounded-md mr-4"
               />

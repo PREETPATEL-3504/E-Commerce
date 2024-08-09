@@ -7,6 +7,7 @@ import { setProductList } from "../../store/reducers/productList";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import env from "react-dotenv";
+import Pagination from "../common/pagination";
 
 const UserProductlist = () => {
   const [products, setProducts] = useState<any>([]);
@@ -56,7 +57,7 @@ const UserProductlist = () => {
   }, [socket, products]);
 
   useEffect(() => {
-    const url = `${env.API}product/products?offset=${
+    const url = `${process.env.REACT_APP_API_URL}product/products?offset=${
       offset * itemsPerPage
     }&limit=${itemsPerPage}`;
     axios
@@ -75,7 +76,7 @@ const UserProductlist = () => {
 
   const cartHandler = (item: any) => {
     try {
-      const url = `${env.API}cart/cart?UserId=${UserId}`;
+      const url = `${process.env.REACT_APP_API_URL}cart/cart?UserId=${UserId}`;
       axios.post(url, item).then((res) => {
         toast.success("Add to cart successfully", {
           autoClose: 1000,
@@ -91,7 +92,7 @@ const UserProductlist = () => {
   };
 
   useEffect(() => {
-    const url = `${env.API}cart/cart?UserId=${UserId}`;
+    const url = `${process.env.REACT_APP_API_URL}cart/cart?UserId=${UserId}`;
     axios.get(url).then((res) => {
       const p_id = res.data.data;
       for (let i = 0; i < p_id.length; i++) {
@@ -101,7 +102,7 @@ const UserProductlist = () => {
   }, [itemAdd]);
 
   useEffect(() => {
-    const url = `${env.API}cart/cart/count?UserId=${UserId}`;
+    const url = `${process.env.REACT_APP_API_URL}cart/cart/count?UserId=${UserId}`;
     axios.get(url).then((res) => {
       setItemCount(res.data.data);
     });
@@ -151,7 +152,7 @@ const UserProductlist = () => {
                 <td className="border px-6 py-4 text-right">{product.quantity}</td>
                 <td className="border px-6 py-4 text-center">
                   <img
-                    src={`${env.API}${product.image_url}`}
+                    src={`${process.env.REACT_APP_API_URL}${product.image_url}`}
                     alt={product.name}
                     className="w-20 h-20 object-cover rounded-md mx-auto"
                   />
@@ -173,6 +174,8 @@ const UserProductlist = () => {
       </div>
 
       {/* Pagination */}
+      {/* <Pagination totalPages={totalPages}/> */}
+      
       <div className="flex justify-center mt-6">
         <button
           disabled={currentPage === 1}

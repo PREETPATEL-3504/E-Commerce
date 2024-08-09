@@ -104,5 +104,5 @@ window.env = {
   "npm_command": "start",
   "INIT_CWD": "/home/admin1/Documents/Preet/E-Commerce/E-Commerce/frontend",
   "EDITOR": "vi",
-  "API": "http://localhost:5000/"
+  "REACT_APP_API_URL": "http://localhost:5000/"
 };

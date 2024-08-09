@@ -9,7 +9,7 @@ const orderId = async (req, res) => {
   const { price } = req.body;
   try {
     const options = {
-      amount: price,
+      amount: price * 100,
       currency: "INR",
       receipt: crypto.randomBytes(10).toString("hex"),
     };
@@ -71,7 +71,7 @@ const orderAdd = async (req, res) => {
 const orderGet = (req, res) => {
   const userId = req.params.id;
   const query =
-    "SELECT orders.*, users.*  FROM orders INNER JOIN users ON users.id = orders.userId WHERE orders.adminId = ? AND orders.paymentStatus = ?";
+    "SELECT orders.*, users.first_name, users.last_name  FROM orders INNER JOIN users ON users.id = orders.userId WHERE orders.adminId = ? AND orders.paymentStatus = ?";
   con.query(query, [userId, "Success"], (err, result) => {
     if (err) {
       return res.status(500).json(err);
@@ -140,6 +140,19 @@ const orderReject = (req, res) => {
   });
 };
 
+const orderDetails = (req, res) => {
+  const id = req.params.id;
+
+  const query =
+    "SELECT orders.*, users.first_name, users.last_name, users.email  FROM orders INNER JOIN users ON users.id = orders.userId WHERE orders.id = ?";
+  con.query(query, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+    res.status(200).json(result);
+  });
+};
+
 module.exports = {
   orderGet,
   orderAdd,
@@ -147,4 +160,5 @@ module.exports = {
   orderReject,
   userOrder,
   orderId,
+  orderDetails,
 };

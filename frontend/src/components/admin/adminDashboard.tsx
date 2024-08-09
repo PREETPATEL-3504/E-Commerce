@@ -1,6 +1,5 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
-import AdminProductlist from "./adminProductlist";
+import AdminProductlist from "./adminProductList";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();

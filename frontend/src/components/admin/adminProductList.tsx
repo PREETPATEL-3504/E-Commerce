@@ -1,11 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "../../store/hooks";
 import { setProductList } from "../../store/reducers/productList";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import env from "react-dotenv";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const AdminProductlist = () => {
   const [products, setProducts] = useState([]);
@@ -13,14 +13,14 @@ const AdminProductlist = () => {
   const [offset, setOffset] = useState(0);
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const adminid = localStorage.getItem("id");
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   const dispatch = useAppDispatch();
   dispatch(setProductList(products));
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const url = `${env.API}product/products?offset=${
+    const url = `${process.env.REACT_APP_API_URL}product/products?offset=${
       offset * itemsPerPage
     }&limit=${itemsPerPage}&AdminId=${adminid}`;
     axios
@@ -37,10 +37,9 @@ const AdminProductlist = () => {
 
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
-  //Products Delete Api
   const onDelete = (id: any) => {
     axios
-      .delete(`${env.API}product/products/${id}`, {
+      .delete(`${process.env.REACT_APP_API_URL}product/products/${id}`, {
         headers: { Authorization: token },
       })
       .then(() => {
@@ -54,6 +53,8 @@ const AdminProductlist = () => {
       });
   };
 
+
+
   return (
     <div className="container bg-black-300 mx-auto p-4 h-full">
       <h1 className="text-3xl font-bold text-white mb-6 text-center">
@@ -64,19 +65,19 @@ const AdminProductlist = () => {
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
           <thead className="bg-gray-200">
             <tr>
-              <th className="py-3 px-4 text-left font-semibold text-gray-600">
+              <th className="py-3 px-4 text-center  font-semibold text-gray-600">
                 Name
               </th>
-              <th className="py-3 px-4 text-left font-semibold text-gray-600">
+              <th className="py-3 px-4 text-center  font-semibold text-gray-600">
                 Price
               </th>
-              <th className="py-3 px-4 text-left font-semibold text-gray-600">
+              <th className="py-3 px-4 text-center  font-semibold text-gray-600">
                 Quantity
               </th>
-              <th className="py-3 px-4 text-left font-semibold text-gray-600">
+              <th className="py-3 px-4 text-center  font-semibold text-gray-600">
                 Image
               </th>
-              <th className="py-3 px-4 text-left font-semibold text-gray-600">
+              <th className="py-3 px-4 text-center font-semibold text-gray-600">
                 Description
               </th>
               <th className="py-3 px-4 text-center font-semibold text-gray-600">
@@ -86,7 +87,10 @@ const AdminProductlist = () => {
           </thead>
           <tbody>
             {products.map((product: any) => (
-              <tr key={product.id} className="border-b hover:bg-gray-50">
+              <tr
+                key={product.id}
+                className="border-b hover:bg-gray-50"
+              >
                 <td className="py-4 px-4 text-gray-700">{product.name}</td>
                 <td className="py-4 px-4 text-gray-700 text-right">
                   ${product.price}
@@ -96,7 +100,7 @@ const AdminProductlist = () => {
                 </td>
                 <td className="py-4 px-4 flex justify-center">
                   <img
-                    src={`${env.API}${product.image_url}`}
+                    src={`${process.env.REACT_APP_API_URL}${product.image_url}`}
                     alt={product.name}
                     className="w-16 h-16 object-cover rounded"
                   />

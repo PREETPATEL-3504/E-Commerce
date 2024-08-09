@@ -21,7 +21,7 @@ const UserOrderList = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(`${env.API}order/user/${userId}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}order/user/${userId}`);
       setOrders(response.data);
     } catch (error) {
       toast.error("Failed to fetch orders", {
@@ -111,7 +111,7 @@ const UserOrderList = () => {
                   </td>
                   <td className="py-3 px-4 border-b border-gray-300 text-center">
                     <img
-                      src={`${env.API}${order.image}`}
+                      src={`${process.env.REACT_APP_API_URL}${order.image}`}
                       alt="Product Image"
                       className="w-20 h-20 object-cover rounded-md"
                     />

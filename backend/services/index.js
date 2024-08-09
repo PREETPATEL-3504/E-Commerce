@@ -1,5 +1,5 @@
 // import axios from "axios";
-// const url = `${env.API}`;
+// const url = `${process.env.REACT_APP_API_URL}`;
 
 
 // export default getProduct = function (offset, itemsPerPage) {

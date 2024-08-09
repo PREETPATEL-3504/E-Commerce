@@ -25,7 +25,7 @@ const Signup = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const url = `${env.API}user/register`;
+      const url = `${process.env.REACT_APP_API_URL}user/register`;
       const res = await axios.post(url, data);
       if (res.status === 200) {
         alert("User created successfully");

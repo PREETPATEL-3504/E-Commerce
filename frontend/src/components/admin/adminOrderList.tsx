@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import PopUpForm from "../common/popUpForm";
 import env from "react-dotenv";
@@ -22,10 +22,11 @@ const OrderList = () => {
   const socket = useSelector((store: any) => store.users.socket);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchOrders();
-  }, [trigger, socket, orders]);
+  }, [trigger, socket]);
 
   useEffect(() => {
     if (socket) {
@@ -51,7 +52,7 @@ const OrderList = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(`${env.API}order/${userId}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}order/${userId}`);
       setOrders(response.data);
     } catch (error) {
       toast.error("Failed to fetch orders", {
@@ -65,13 +66,17 @@ const OrderList = () => {
   };
 
   const acceptHandler = (id: any) => {
-    const url = `${env.API}order/accept/${id}`;
+    const url = `${process.env.REACT_APP_API_URL}order/accept/${id}`;
     axios.patch(url).then((res) => {
       toast.success("Order accepted successfully", {
         autoClose: 1000,
       });
       setTrigger(!trigger);
     });
+  };
+
+  const orderDetails = (id:any) => {
+    navigate(`/order-details/${id}`);
   };
 
   return (
@@ -112,19 +117,23 @@ const OrderList = () => {
               </tr>
             ) : (
               orders.map((order: any) => (
-                <tr key={order.id} className="hover:bg-gray-50">
+                <tr
+                  key={order.id}
+                  className="hover:bg-gray-50"
+                  onClick={() => orderDetails(order.id)}
+                >
                   <td className="py-3 px-4 border-b border-gray-200 text-right font-medium text-gray-900">
                     {order.id}
                   </td>
                   <td className="py-3 px-4 border-b border-gray-200 text-center">
                     <img
-                      src={`${env.API}${order.image}`}
+                      src={`${process.env.REACT_APP_API_URL}${order.image}`}
                       alt="Product Image"
                       className="w-20 h-20 object-cover rounded-md mx-auto"
                     />
                   </td>
                   <td className="py-3 px-4 border-b border-gray-200 text-center">
-                    {order.first_name} {order.last_name} 
+                    {order.first_name} {order.last_name}
                   </td>
                   <td className="py-3 px-4 border-b border-gray-200 text-center">
                     {order.name}

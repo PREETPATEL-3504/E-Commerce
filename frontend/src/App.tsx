@@ -14,6 +14,7 @@ import { useAppDispatch } from "./store/hooks";
 import { setSocket } from "./store/reducers/userSlice";
 import OrderList from "./components/admin/adminOrderList";
 import UserOrderList from "./components/user/userOrderList";
+import Orderdetails from "./components/admin/orderDetails";
 
 function App() {
   const ENDPOINT = "http://localhost:5000";
@@ -96,6 +97,10 @@ function App() {
           <Route
             path="/user-order"
             element={isLoggedIn ? <UserOrderList /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/order-details/:id"
+            element={isLoggedIn ? <Orderdetails /> : <Navigate to="/" />}
           />
 
           <Route path="/*" element={<Navigate to="/login" />} />
