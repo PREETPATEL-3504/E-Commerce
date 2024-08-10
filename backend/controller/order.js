@@ -22,15 +22,14 @@ const orderId = async (req, res) => {
 };
 
 const orderAdd = async (req, res) => {
-  const UserId = req.params.id;
-  const { productId, quantity, price, adminId, name, image_url, order_id } =
-    req.body;
+  const userId = req.params.id;  
+  const { productId, quantity, price, adminId, name, image_url, order_id } = req.body;
   const query =
     "INSERT INTO orders (userId, productId, quantity, price, adminid, name, orderId, paymentStatus, image) VALUES (?,?,?,?,?,?,?,?, ?)";
   con.query(
     query,
     [
-      UserId,
+      userId,
       productId,
       quantity,
       price,
@@ -44,7 +43,7 @@ const orderAdd = async (req, res) => {
       if (err) throw err;
       if (result) {
         const query = "SELECT email FROM users WHERE id = ?";
-        con.query(query, [UserId], (err, result) => {
+        con.query(query, [userId], (err, result) => {
           if (err) throw err;
           const emailTo = result[0].email;
           const subject = "Order Placed Successfully";

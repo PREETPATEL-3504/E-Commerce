@@ -4,7 +4,7 @@ const addToCart = async (req, res) => {
   const { AdminId, description, image_url, name, price } = req.body;
 
   const ProductId = req.body.id;
-  const UserId = req.query.UserId;
+  const userId = req.query.userId;
   const quantity = 1;
   const createdAt = new Date().toISOString().slice(0, 19).replace("T", " ");
   const updatedAt = createdAt;
@@ -14,7 +14,7 @@ const addToCart = async (req, res) => {
   con.query(
     query,
     [
-      UserId,
+      userId,
       AdminId,
       description,
       ProductId,
@@ -47,12 +47,12 @@ const addToCart = async (req, res) => {
 
 const addQuantityToCart = async (req, res) => {
   const ProductId = req.params.id;
-  const UserId = req.query.UserId;
+  const userId = req.query.userId;
   const createdAt = new Date().toISOString().slice(0, 19).replace("T", " ");
   const updatedAt = createdAt;
 
   const productCheck = "SELECT * FROM carts WHERE userId = ? AND ProductId = ?";
-  con.query(productCheck, [UserId, ProductId], async (checkErr, result) => {
+  con.query(productCheck, [userId, ProductId], async (checkErr, result) => {
     if (checkErr) {
       console.error("Error checking cart:", checkErr);
       res.status(500).json({
@@ -97,12 +97,12 @@ const addQuantityToCart = async (req, res) => {
 
 const minusQuantityToCart = async (req, res) => {
   const ProductId = req.params.id;
-  const UserId = req.query.UserId;
+  const userId = req.query.userId;
   const createdAt = new Date().toISOString().slice(0, 19).replace("T", " ");
   const updatedAt = createdAt;
 
   const productCheck = "SELECT * FROM carts WHERE userId = ? AND ProductId = ?";
-  con.query(productCheck, [UserId, ProductId], async (checkErr, result) => {
+  con.query(productCheck, [userId, ProductId], async (checkErr, result) => {
     if (checkErr) {
       console.error("Error checking cart:", checkErr);
       res.status(500).json({
@@ -146,9 +146,9 @@ const minusQuantityToCart = async (req, res) => {
 };
 
 const getCart = async (req, res) => {
-  const UserId = req.query.UserId;
+  const userId = req.query.userId;
   try {
-    const query = `SELECT * FROM carts WHERE userId = ${UserId}`;
+    const query = `SELECT * FROM carts WHERE userId = ${userId}`;
     con.query(query, (err, result) => {
       if (err) return res.status(200).json({ error: err });
       res.status(200).json({ data: result });
@@ -177,9 +177,9 @@ const deleteItem = async (req, res) => {
 };
 
 const countItem = async (req, res) => {
-  const UserId = req.query.UserId;
+  const userId = req.query.userId;
   try {
-    const query = `SELECT COUNT(*) as total FROM carts WHERE userId = ${UserId}`;
+    const query = `SELECT COUNT(*) as total FROM carts WHERE userId = ${userId}`;
     con.query(query, (err, result) => {
       if (err) return res.status(500).json({ error: err });
       res.status(200).json({ data: result[0].total });

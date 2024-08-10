@@ -12,10 +12,10 @@ const Cart = () => {
   const [count, setCount] = useState(0);
   const [trigger, setTrigger] = useState(false);
 
-  const UserId = localStorage.getItem("id");
+  const userId = localStorage.getItem("id");
 
   useEffect(() => {
-    const url = `${process.env.REACT_APP_API_URL}cart/cart?UserId=${UserId}`;
+    const url = `${process.env.REACT_APP_API_URL}cart/cart?userId=${userId}`;
     axios.get(url).then((res: any) => {
       setCartProduct(res.data.data);
       const total = res.data.data.reduce(
@@ -28,7 +28,6 @@ const Cart = () => {
 
   const onDelete = (product: any) => {
     const id = product.id;
-
     const url = `${process.env.REACT_APP_API_URL}cart/cart/${id}`;
     axios.delete(url).then((res) => {
       toast.success("item remove successfully", {
@@ -42,7 +41,7 @@ const Cart = () => {
   const addHandler = (item: any) => {
     const id = item["ProductId"];
     try {
-      const url = `${process.env.REACT_APP_API_URL}cart/cart/add/${id}?UserId=${UserId}`;
+      const url = `${process.env.REACT_APP_API_URL}cart/cart/add/${id}?userId=${userId}`;
       axios
         .put(url, { quantity: item.quantity + 1 })
         .then((res) => {
@@ -68,7 +67,7 @@ const Cart = () => {
   const removeHandler = (item: any) => {
     const id = item["ProductId"];
     try {
-      const url = `${process.env.REACT_APP_API_URL}cart/cart/remove/${id}?UserId=${UserId}`;
+      const url = `${process.env.REACT_APP_API_URL}cart/cart/remove/${id}?userId=${userId}`;
       axios
         .put(url, { quantity: item.quantity + 1 })
         .then((res) => {
@@ -93,7 +92,7 @@ const Cart = () => {
 
   const initPay = (data: any, product: any) => {
     const order: any = {
-      userId: UserId,
+      userId: userId,
       adminId: product.AdminId,
       productId: product.ProductId,
       name: product.name,
@@ -102,7 +101,7 @@ const Cart = () => {
       price: product.price,
       order_id: data.id,
     };
-    const options:any = {
+    const options: any = {
       key: "rzp_test_5W5tkiV5AbJbDk",
       amount: data.amount * 100,
       currency: data.currency,
@@ -115,7 +114,7 @@ const Cart = () => {
         toast.success("Payment Successful", {
           autoClose: 500,
         });
-        const orderURL = `${process.env.REACT_APP_API_URL}order/${UserId}`;
+        const orderURL = `${process.env.REACT_APP_API_URL}order/${userId}`;
         axios.post(orderURL, order);
         const url = `${process.env.REACT_APP_API_URL}cart/cart/${id}`;
         axios.delete(url);
@@ -138,7 +137,6 @@ const Cart = () => {
         autoClose: 500,
       });
     });
-
     rzp1.open();
 
     setTrigger(!trigger);
@@ -156,8 +154,6 @@ const Cart = () => {
       });
     }
   };
-
-
 
   return (
     <div className="p-6 min-h-screen">
@@ -244,7 +240,6 @@ const Cart = () => {
         </div>
       )}
 
-      {/* Continue Shopping Button */}
       <div className="flex justify-center mt-8">
         <Link to="/user">
           <button className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-600 transition">

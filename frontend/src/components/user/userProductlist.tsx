@@ -13,16 +13,17 @@ const UserProductlist = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const [totalProductsCount, setTotalProductsCount] = useState(0);
-  const [productId, setProductId] = useState<any>([]);
   const [itemAdd, setItemAdd] = useState(true);
   const [itemCount, setItemCount] = useState(0);
+  const productId :any= [];
   const itemsPerPage = 10;
-  const UserId = localStorage.getItem("id");
+  const userId = localStorage.getItem("id");
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const socket = useAppSelector((store) => store.users.socket);
   const token = localStorage.getItem("token");
+  const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
   useEffect(() => {
     if (socket) {
@@ -71,10 +72,9 @@ const UserProductlist = () => {
         setTotalProductsCount(res.data.total);
       });
   }, [currentPage, socket]);
-  const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
   useEffect(() => {
-    const url = `${process.env.REACT_APP_API_URL}cart/cart?UserId=${UserId}`;
+    const url = `${process.env.REACT_APP_API_URL}cart/cart?userId=${userId}`;
     axios.get(url).then((res) => {
       const p_id = res.data.data;
       for (let i = 0; i < p_id.length; i++) {
@@ -84,7 +84,7 @@ const UserProductlist = () => {
   }, [itemAdd]);
 
   useEffect(() => {
-    const url = `${process.env.REACT_APP_API_URL}cart/cart/count?UserId=${UserId}`;
+    const url = `${process.env.REACT_APP_API_URL}cart/cart/count?userId=${userId}`;
     axios.get(url).then((res) => {
       setItemCount(res.data.data);
     });
@@ -92,7 +92,7 @@ const UserProductlist = () => {
 
   const cartHandler = (item: any) => {
     try {
-      const url = `${process.env.REACT_APP_API_URL}cart/cart?UserId=${UserId}`;
+      const url = `${process.env.REACT_APP_API_URL}cart/cart?userId=${userId}`;
       axios.post(url, item).then((res) => {
         toast.success("Add to cart successfully", {
           autoClose: 1000,
@@ -107,7 +107,22 @@ const UserProductlist = () => {
     }
   };
 
-
+  const wishListHandler = (item: any) => {
+    const data = {
+      userId: userId,
+      productId: item.id,
+    };
+    try {
+      axios.post(`${process.env.REACT_APP_API_URL}wishlist/add`, data);
+      toast.success("Add to wishlist successfully", {
+        autoClose: 1000,
+      });
+    } catch (error) {
+      toast.error("Error adding to wishlist", {
+        autoClose: 1000,
+      });
+    }
+  };
 
   return (
     <>
@@ -130,7 +145,7 @@ const UserProductlist = () => {
               <span className="ml-2 text-lg font-semibold">{itemCount}</span>
             </button>
             <button
-              onClick={() => navigate("/cart")}
+              onClick={() => navigate("/wish-lists")}
               className="flex items-center bg-gray-800 text-white  rounded-lg hover:bg-gray-700 transition"
             >
               <TbShoppingCartHeart className="text-2xl" />
@@ -182,6 +197,13 @@ const UserProductlist = () => {
                     >
                       Add to Cart
                     </button>
+
+                    <button
+                      className={`bg-blue-500 text-white px-4 py-2 ml-2 rounded-lg shadow-md hover:bg-blue-600 transition`}
+                      onClick={() => wishListHandler(product)}
+                    >
+                      Add to Wishlist
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -190,7 +212,6 @@ const UserProductlist = () => {
         </div>
 
         {/* Pagination */}
-        {/* <Pagination totalPages={totalPages}/> */}
 
         <div className="flex justify-center mt-6">
           <button

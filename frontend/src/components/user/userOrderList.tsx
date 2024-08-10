@@ -7,13 +7,11 @@ import PopUpForm from "../common/popUpForm";
 
 const UserOrderList = () => {
   const [orders, setOrders] = useState<any>([]);
-  const userId = localStorage.getItem("id");
-  const socket = useSelector((store: any) => store.users.socket);
-
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(null);
-
-
+  const userId = localStorage.getItem("id");
+  const socket = useSelector((store: any) => store.users.socket);
+  
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -53,7 +51,9 @@ const UserOrderList = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}order/user/${userId}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}order/user/${userId}`
+      );
       setOrders(response.data);
     } catch (error) {
       toast.error("Failed to fetch orders", {
@@ -61,7 +61,6 @@ const UserOrderList = () => {
       });
     }
   };
-
 
   const rejectHandler = (id: any) => {
     togglePopup(id);
