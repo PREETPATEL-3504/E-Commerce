@@ -49,6 +49,8 @@ export const UserWishList = () => {
         const orderURL = `${process.env.REACT_APP_API_URL}order/${userId}`;
         axios.post(orderURL, order);
         setItem(item?.filter((p: any) => p.id !== product.id));
+        const url = `${process.env.REACT_APP_API_URL}wishlist/${product.id}`;
+        axios.delete(url);
         setTrigger(!trigger);
       },
       prefill: {
@@ -126,7 +128,6 @@ export const UserWishList = () => {
               </div>
               <div className="p-6 pt-0">
                 <button
-                  data-ripple-light="true"
                   type="button"
                   onClick={() => handlePay(item)}
                   className="select-none rounded-lg bg-blue-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
@@ -134,10 +135,8 @@ export const UserWishList = () => {
                   Buy
                 </button>
                 <button
-                  data-ripple-light="true"
-                  type="button"
                   onClick={() => handleDelete(item?.id)}
-                  className="select-none rounded-lg bg-blue-500 py-3 px-6 ml-2 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  className="rounded-lg bg-blue-500 py-3 px-6 ml-2 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                 >
                   Remove
                 </button>

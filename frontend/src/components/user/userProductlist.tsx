@@ -10,19 +10,20 @@ import { TbShoppingCartHeart } from "react-icons/tb";
 
 const UserProductlist = () => {
   const [products, setProducts] = useState<any>([]);
+  const [productId, setProductId] = useState<any>([]);
+  const [wishListId, setWishListId] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [itemAdd, setItemAdd] = useState(true);
   const [itemCount, setItemCount] = useState(0);
-  const productId :any= [];
-  const itemsPerPage = 10;
-  const userId = localStorage.getItem("id");
-
+  const [wishListItem, setWishListItem] = useState(0);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const socket = useAppSelector((store) => store.users.socket);
   const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("id");
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
   useEffect(() => {
@@ -30,23 +31,14 @@ const UserProductlist = () => {
       socket.on("product", (Newproduct: any) => {
         setProducts((prevProducts: any) => [...prevProducts, Newproduct]);
       });
-    }
-  }, [socket]);
 
-  useEffect(() => {
-    if (socket) {
       socket.on("delete", (updatedProduct: any) => {
-        console.log("Deleted product received:", updatedProduct);
         const data = products.filter(
           (product: any) => product.id != updatedProduct
         );
         setProducts(data);
       });
-    }
-  }, [products]);
 
-  useEffect(() => {
-    if (socket) {
       socket.on("update", (updatedProduct: any) => {
         const data = products.map((product: any) =>
           product.id == updatedProduct.id ? updatedProduct : product
@@ -71,23 +63,38 @@ const UserProductlist = () => {
         setProducts(res.data.data);
         setTotalProductsCount(res.data.total);
       });
-  }, [currentPage, socket]);
+  }, [currentPage, socket, itemAdd]);
 
   useEffect(() => {
-    const url = `${process.env.REACT_APP_API_URL}cart/cart?userId=${userId}`;
-    axios.get(url).then((res) => {
-      const p_id = res.data.data;
-      for (let i = 0; i < p_id.length; i++) {
-        productId.push(...productId, res.data.data[i].ProductId);
-      }
-    });
-  }, [itemAdd]);
+    axios
+      .get(`${process.env.REACT_APP_API_URL}cart/cart?userId=${userId}`)
+      .then((res) => {
+        const p_id = res.data.data;
+        for (let i = 0; i < p_id.length; i++) {
+          productId.push(...productId, res.data.data[i].ProductId);
+        }
+      });
 
-  useEffect(() => {
-    const url = `${process.env.REACT_APP_API_URL}cart/cart/count?userId=${userId}`;
-    axios.get(url).then((res) => {
-      setItemCount(res.data.data);
-    });
+    axios
+      .get(`${process.env.REACT_APP_API_URL}cart/cart/count?userId=${userId}`)
+      .then((res) => {
+        setItemCount(res.data.data);
+      });
+
+    axios
+      .get(`${process.env.REACT_APP_API_URL}wishlist/${userId}`)
+      .then((res) => {
+        const p_id = res.data.result;
+        for (let i = 0; i < p_id.length; i++) {
+          wishListId.push(...wishListId, res.data.result[i].productId);
+        }
+      });
+
+    axios
+      .get(`${process.env.REACT_APP_API_URL}wishList/count/${userId}`)
+      .then((res) => {
+        setWishListItem(res.data.data);
+      });
   }, [itemAdd]);
 
   const cartHandler = (item: any) => {
@@ -100,7 +107,6 @@ const UserProductlist = () => {
         setItemAdd(!itemAdd);
       });
     } catch (error) {
-      console.error("Error adding to cart:", error);
       toast.error("Error adding to cart", {
         autoClose: 1000,
       });
@@ -117,6 +123,7 @@ const UserProductlist = () => {
       toast.success("Add to wishlist successfully", {
         autoClose: 1000,
       });
+      setItemAdd(!itemAdd);
     } catch (error) {
       toast.error("Error adding to wishlist", {
         autoClose: 1000,
@@ -142,14 +149,14 @@ const UserProductlist = () => {
               className="flex items-center bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
             >
               <IoCart className="text-2xl" />
-              <span className="ml-2 text-lg font-semibold">{itemCount}</span>
+              <span className="ml-1 text-lg font-semibold">{itemCount}</span>
             </button>
             <button
               onClick={() => navigate("/wish-lists")}
               className="flex items-center bg-gray-800 text-white  rounded-lg hover:bg-gray-700 transition"
             >
               <TbShoppingCartHeart className="text-2xl" />
-              <span className="text-lg font-semibold">{itemCount}</span>
+              <span className="ml-1 text-lg font-semibold">{wishListItem}</span>
             </button>
           </div>
         </div>
@@ -199,7 +206,12 @@ const UserProductlist = () => {
                     </button>
 
                     <button
-                      className={`bg-blue-500 text-white px-4 py-2 ml-2 rounded-lg shadow-md hover:bg-blue-600 transition`}
+                      className={`bg-blue-500 text-white px-4 py-2 ml-2 rounded-lg shadow-md hover:bg-blue-600 transition ${
+                        wishListId.includes(product.id)
+                          ? "cursor-not-allowed opacity-50"
+                          : ""
+                      }`}
+                      disabled={wishListId.includes(product.id)}
                       onClick={() => wishListHandler(product)}
                     >
                       Add to Wishlist
