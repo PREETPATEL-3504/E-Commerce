@@ -19,13 +19,7 @@ const  mail = (emailTo, subject, body) => {
   };
 
   if (transporter) {
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        res.json({ error: error });
-      } else {
-        
-      }
-    });
+    transporter.sendMail(mailOptions);
   } else {
     console.error("transporter is undefined");
   }
