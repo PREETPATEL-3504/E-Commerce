@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import PopUpForm from "../common/popUpForm";
-import env from "react-dotenv";
 
 const UserOrderList = () => {
   const [orders, setOrders] = useState<any>([]);
@@ -14,21 +13,6 @@ const UserOrderList = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(null);
 
-  const togglePopup = (orderId: any | null = null) => {
-    setIsPopupVisible(!isPopupVisible);
-    setCurrentOrderId(orderId);
-  };
-
-  const fetchOrders = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}order/user/${userId}`);
-      setOrders(response.data);
-    } catch (error) {
-      toast.error("Failed to fetch orders", {
-        autoClose: 500,
-      });
-    }
-  };
 
   useEffect(() => {
     fetchOrders();
@@ -61,6 +45,23 @@ const UserOrderList = () => {
       });
     }
   }, [orders]);
+
+  const togglePopup = (orderId: any | null = null) => {
+    setIsPopupVisible(!isPopupVisible);
+    setCurrentOrderId(orderId);
+  };
+
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}order/user/${userId}`);
+      setOrders(response.data);
+    } catch (error) {
+      toast.error("Failed to fetch orders", {
+        autoClose: 500,
+      });
+    }
+  };
+
 
   const rejectHandler = (id: any) => {
     togglePopup(id);

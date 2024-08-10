@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import { TiPlus } from "react-icons/ti";
 import { TiMinus } from "react-icons/ti";
 import useRazorpay from "react-razorpay";
-import env from "react-dotenv";
 
 const Cart = () => {
   const [Razorpay] = useRazorpay();
