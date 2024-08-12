@@ -109,8 +109,9 @@ const Cart = () => {
       description: "Test",
       image: data.img,
       order_id: data.id,
-      handler: async function (response: any) {
+      handler: async function () {
         const id: any = product.id;
+        order.payment = "Success";
         toast.success("Payment Successful", {
           autoClose: 500,
         });
@@ -133,6 +134,9 @@ const Cart = () => {
     const rzp1 = new Razorpay(options);
 
     rzp1.on("payment.failed", () => {
+      order.payment = "Failed";
+      const orderURL = `${process.env.REACT_APP_API_URL}order/${userId}`;
+      axios.post(orderURL, order);
       toast.error("Payment Failed", {
         autoClose: 500,
       });

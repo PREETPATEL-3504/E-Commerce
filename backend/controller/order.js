@@ -22,8 +22,8 @@ const orderId = async (req, res) => {
 };
 
 const orderAdd = async (req, res) => {
-  const userId = req.params.id;  
-  const { productId, quantity, price, adminId, name, image_url, order_id } = req.body;
+  const userId = req.params.id;
+  const { productId, quantity, price, adminId, name, image_url, order_id, payment } = req.body;
   const query =
     "INSERT INTO orders (userId, productId, quantity, price, adminid, name, orderId, paymentStatus, image) VALUES (?,?,?,?,?,?,?,?, ?)";
   con.query(
@@ -36,7 +36,7 @@ const orderAdd = async (req, res) => {
       adminId,
       name,
       order_id,
-      "Success",
+      payment,
       image_url,
     ],
     (err, result) => {

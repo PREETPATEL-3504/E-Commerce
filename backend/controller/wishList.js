@@ -1,4 +1,3 @@
-const { query } = require("express");
 const con = require("../db");
 const wishList = require("../model/wishList");
 const validate = require("../validation/wishListValidation");
