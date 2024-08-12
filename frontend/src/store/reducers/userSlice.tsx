@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface User {
-  name: string;
+  user: any;
   socket: any;
 }
 
 const initialState: User = {
-  name: "",
+  user: [],
   socket: null,
 };
 
@@ -14,8 +14,8 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setName: (state, action) => {
-      state.name = action.payload;
+    setUser: (state, action) => {
+      state.user = action.payload;
     },
     setSocket: (state, action) => {
       state.socket = action.payload;
@@ -26,5 +26,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { setName, setSocket, disconnectSocket } = userSlice.actions;
+export const { setUser, setSocket, disconnectSocket } = userSlice.actions;
 export default userSlice.reducer;

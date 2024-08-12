@@ -1,10 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { setUser } from "../../store/reducers/userSlice";
 
 const Login = ({ setIsLoggedIn }: any) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   interface FormData {
     email: string;
     password: string;
@@ -22,10 +25,10 @@ const Login = ({ setIsLoggedIn }: any) => {
       const url = `${process.env.REACT_APP_API_URL}user/user-login`;
       const res = await axios.post(url, data);
       if (res.status === 200) {
+        dispatch(setUser(res.data.data));
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("id", res.data.data.id);
         localStorage.setItem("role", res.data.data.role);
-        
         setIsLoggedIn(true);
         {
           if (res.data.data.role === "admin") {
@@ -46,7 +49,7 @@ const Login = ({ setIsLoggedIn }: any) => {
         alert("Error Loging user");
       }
     } catch (error) {
-      return error
+      return error;
     }
   };
 

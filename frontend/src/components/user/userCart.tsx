@@ -11,7 +11,6 @@ const Cart = () => {
   const [cartProduct, setCartProduct] = useState([]);
   const [count, setCount] = useState(0);
   const [trigger, setTrigger] = useState(false);
-
   const userId = localStorage.getItem("id");
 
   useEffect(() => {

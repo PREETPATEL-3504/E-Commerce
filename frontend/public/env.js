@@ -34,7 +34,7 @@ window.env = {
   "SYSTEMD_EXEC_PID": "2534",
   "DBUS_SESSION_BUS_ADDRESS": "unix:path=/run/user/1000/bus",
   "COLORTERM": "truecolor",
-  "GIO_LAUNCHED_DESKTOP_FILE_PID": "5029",
+  "GIO_LAUNCHED_DESKTOP_FILE_PID": "50866",
   "COLOR": "1",
   "NVM_DIR": "/home/admin1/.nvm",
   "npm_config_metrics_registry": "https://registry.npmjs.org/",
