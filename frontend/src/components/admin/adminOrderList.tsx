@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import PopUpForm from "../common/popUpForm";
-import env from "react-dotenv";
 
 const OrderList = () => {
   interface Order {
@@ -52,7 +51,9 @@ const OrderList = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}order/${userId}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}order/${userId}`
+      );
       setOrders(response.data);
     } catch (error) {
       toast.error("Failed to fetch orders", {
@@ -75,7 +76,7 @@ const OrderList = () => {
     });
   };
 
-  const orderDetails = (id:any) => {
+  const orderDetails = (id: any) => {
     navigate(`/order-details/${id}`);
   };
 

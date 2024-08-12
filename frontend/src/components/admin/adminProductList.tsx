@@ -1,10 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useAppDispatch } from "../../store/hooks";
-import { setProductList } from "../../store/reducers/productList";
-import env from "react-dotenv";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const AdminProductlist = () => {
@@ -13,11 +10,9 @@ const AdminProductlist = () => {
   const [offset, setOffset] = useState(0);
   const [totalProductsCount, setTotalProductsCount] = useState(0);
   const adminid = localStorage.getItem("id");
-  const itemsPerPage = 10;
-
-  const dispatch = useAppDispatch();
-  dispatch(setProductList(products));
   const token = localStorage.getItem("token");
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
   useEffect(() => {
     const url = `${process.env.REACT_APP_API_URL}product/products?offset=${
@@ -35,8 +30,6 @@ const AdminProductlist = () => {
       });
   }, [offset]);
 
-  const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
-
   const onDelete = (id: any) => {
     axios
       .delete(`${process.env.REACT_APP_API_URL}product/products/${id}`, {
@@ -52,8 +45,6 @@ const AdminProductlist = () => {
         console.error("Error deleting product:", error);
       });
   };
-
-
 
   return (
     <div className="container bg-black-300 mx-auto p-4 h-full">
@@ -87,10 +78,7 @@ const AdminProductlist = () => {
           </thead>
           <tbody>
             {products.map((product: any) => (
-              <tr
-                key={product.id}
-                className="border-b hover:bg-gray-50"
-              >
+              <tr key={product.id} className="border-b hover:bg-gray-50">
                 <td className="py-4 px-4 text-gray-700">{product.name}</td>
                 <td className="py-4 px-4 text-gray-700 text-right">
                   ${product.price}

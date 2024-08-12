@@ -1,16 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import env from "react-dotenv";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const AddProducts = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
-
   const AdminId = localStorage.getItem("id");
   const token = localStorage.getItem("token");
-
+  const { id } = useParams();
+    
   interface FormData {
     name: string;
     price: string | number;
@@ -19,6 +17,16 @@ const AddProducts = () => {
     description: string;
     AdminId: number;
   }
+
+  let [data, setData] = useState<FormData>({
+    name: "",
+    price: "",
+    quantity: "",
+    image_url: "",
+    description: "",
+    AdminId: 0,
+  });
+
 
   useEffect(() => {
     const fetchdata = async () => {
@@ -35,14 +43,6 @@ const AddProducts = () => {
     }
   }, [id]);
 
-  let [data, setData] = useState<FormData>({
-    name: "",
-    price: "",
-    quantity: "",
-    image_url: "",
-    description: "",
-    AdminId: 0,
-  });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -95,7 +95,11 @@ const AddProducts = () => {
         } else {
           alert("Error creating user");
         }
-      } catch (error) {}
+      } catch (error) {
+        toast.error("Error adding product", {
+          autoClose: 1000,
+        });
+      }
     }
   };
   return (

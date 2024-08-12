@@ -1,16 +1,16 @@
 import axios from "axios";
 import { useState } from "react";
-import env from "react-dotenv";
 import { toast } from "react-toastify";
 
 function PopUpForm({ isVisible, onClose, id }: any) {
+  const role = localStorage.getItem("role");
+  
   const [reason, setReason] = useState<any>({
     reason: "",
     comment: "",
   });
 
   if (!isVisible) return null;
-  const role = localStorage.getItem("role");
 
   const handleSubmit = (e: any) => {
     e.preventDefault();

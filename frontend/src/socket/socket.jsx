@@ -3,7 +3,7 @@ import { setSocket } from "../store/reducers/userSlice";
 import { io } from "socket.io-client";
 import { useEffect } from "react";
 
-const ENDPOINT = "http://localhost:5000";
+const ENDPOINT = `${process.env.REACT_APP_API_URL}`;
 
 export const ConnectSocket = () => {
   const dispatch = useDispatch();

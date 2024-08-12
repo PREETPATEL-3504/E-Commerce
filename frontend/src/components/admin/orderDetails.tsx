@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-// import env from "react-dotenv";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Orderdetails = () => {
   const [order, setOrder] = useState<any>([]);
   let { id } = useParams();
   const navigate = useNavigate();
+  
   useEffect(() => {
     fethData();
   }, []);

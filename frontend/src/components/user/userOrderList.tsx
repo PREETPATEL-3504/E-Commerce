@@ -42,7 +42,7 @@ const UserOrderList = () => {
         }
       });
     }
-  }, [orders]);
+  }, [orders, socket]);
 
   const togglePopup = (orderId: any | null = null) => {
     setIsPopupVisible(!isPopupVisible);
