@@ -27,7 +27,7 @@ const add = async (req, res) => {
 const get = async (req, res) => {
   const userId = req.params.id;
   const query =
-    "SELECT * FROM wishLists INNER JOIN Products ON wishLists.productId = Products.id WHERE userId = ?";
+    "SELECT * FROM wishLists INNER JOIN products ON wishLists.productId = products.id WHERE userId = ?";
   con.query(query, [userId], (err, result) => {
     if (err) throw err;
     res.status(200).json({ result });

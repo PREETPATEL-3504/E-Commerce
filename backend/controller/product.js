@@ -18,7 +18,7 @@ const addProduct = async (req, res) => {
     const createdAt = new Date().toISOString().slice(0, 19).replace("T", " ");
     const updatedAt = createdAt;
     const query =
-      "INSERT INTO Products (name, price, description, quantity, image_url, AdminId, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?,?,?, ?)";
+      "INSERT INTO products (name, price, description, quantity, image_url, AdminId, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?,?,?, ?)";
     con.query(
       query,
       [
@@ -77,8 +77,8 @@ const getProduct = async (req, res) => {
       new Promise((resolve, reject) => {
         const query =
           AdminId !== null
-            ? `SELECT * FROM Products WHERE AdminId = ? LIMIT ? OFFSET ?`
-            : `SELECT * FROM Products LIMIT ? OFFSET ?`;
+            ? `SELECT * FROM products WHERE AdminId = ? LIMIT ? OFFSET ?`
+            : `SELECT * FROM products LIMIT ? OFFSET ?`;
 
         con.query(
           query,
@@ -90,7 +90,7 @@ const getProduct = async (req, res) => {
         );
       }),
       new Promise((resolve, reject) => {
-        con.query(`SELECT COUNT(*) AS total FROM Products`, (error, result) => {
+        con.query(`SELECT COUNT(*) AS total FROM products`, (error, result) => {
           if (error) reject(error);
           else resolve(result[0].total);
         });
@@ -109,7 +109,7 @@ const getProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   con.query(
-    "DELETE FROM Products WHERE id = ?",
+    "DELETE FROM products WHERE id = ?",
     [req.params.id],
     function (error, result) {
       if (error) return res.status(200).json({ error: error });
@@ -137,7 +137,7 @@ const updateProduct = async (req, res) => {
     };
 
     con.query(
-      "UPDATE Products SET ? WHERE id = ?",
+      "UPDATE products SET ? WHERE id = ?",
       [updateData, productId],
       (err, result) => {
         if (err) return res.status(200).json({ error: err });
