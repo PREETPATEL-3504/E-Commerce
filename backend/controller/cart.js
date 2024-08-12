@@ -177,7 +177,7 @@ const deleteItem = async (req, res) => {
 };
 
 const countItem = async (req, res) => {
-  const userId = req.query.userId;
+  const userId = req.params.id;
   try {
     const query = `SELECT COUNT(*) as total FROM carts WHERE userId = ${userId}`;
     con.query(query, (err, result) => {

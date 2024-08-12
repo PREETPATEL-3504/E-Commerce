@@ -14,20 +14,27 @@ const Cart = () => {
   const userId = localStorage.getItem("id");
 
   useEffect(() => {
-    const url = `${process.env.REACT_APP_API_URL}cart/cart?userId=${userId}`;
-    axios.get(url).then((res: any) => {
-      setCartProduct(res.data.data);
-      const total = res.data.data.reduce(
-        (acc: any, product: any) => acc + product.price * product.quantity,
-        0
-      );
-      setCount(total);
-    });
+    
+    try {
+      const url = `${process.env.REACT_APP_API_URL}cart/?userId=${userId}`;
+      axios.get(url).then((res: any) => {
+        setCartProduct(res.data.data);
+        const total = res.data.data.reduce(
+          (acc: any, product: any) => acc + product.price * product.quantity,
+          0
+        );
+        setCount(total);
+      });  
+    } catch (error) {
+      toast.error("Error to fetch Cart Product",{
+        autoClose: 1000,  
+      })
+    }
   }, [trigger]);
 
   const onDelete = (product: any) => {
     const id = product.id;
-    const url = `${process.env.REACT_APP_API_URL}cart/cart/${id}`;
+    const url = `${process.env.REACT_APP_API_URL}cart/${id}`;
     axios.delete(url).then((res) => {
       toast.success("item remove successfully", {
         autoClose: 1000,
@@ -40,7 +47,7 @@ const Cart = () => {
   const addHandler = (item: any) => {
     const id = item["ProductId"];
     try {
-      const url = `${process.env.REACT_APP_API_URL}cart/cart/add/${id}?userId=${userId}`;
+      const url = `${process.env.REACT_APP_API_URL}cart/increse/${id}?userId=${userId}`;
       axios
         .put(url, { quantity: item.quantity + 1 })
         .then((res) => {
@@ -66,7 +73,7 @@ const Cart = () => {
   const removeHandler = (item: any) => {
     const id = item["ProductId"];
     try {
-      const url = `${process.env.REACT_APP_API_URL}cart/cart/remove/${id}?userId=${userId}`;
+      const url = `${process.env.REACT_APP_API_URL}cart/decrese/${id}?userId=${userId}`;
       axios
         .put(url, { quantity: item.quantity + 1 })
         .then((res) => {

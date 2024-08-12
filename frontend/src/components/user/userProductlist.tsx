@@ -49,7 +49,7 @@ const UserProductlist = () => {
   }, [socket, products]);
 
   useEffect(() => {
-    const url = `${process.env.REACT_APP_API_URL}product/products?offset=${
+    const url = `${process.env.REACT_APP_API_URL}product/?offset=${
       offset * itemsPerPage
     }&limit=${itemsPerPage}`;
     axios
@@ -67,7 +67,7 @@ const UserProductlist = () => {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}cart/cart?userId=${userId}`)
+      .get(`${process.env.REACT_APP_API_URL}cart/?userId=${userId}`)
       .then((res) => {
         const p_id = res.data.data;
         for (let i = 0; i < p_id.length; i++) {
@@ -76,7 +76,7 @@ const UserProductlist = () => {
       });
 
     axios
-      .get(`${process.env.REACT_APP_API_URL}cart/cart/count?userId=${userId}`)
+      .get(`${process.env.REACT_APP_API_URL}cart/count/${userId}`)
       .then((res) => {
         setItemCount(res.data.data);
       });
@@ -99,7 +99,7 @@ const UserProductlist = () => {
 
   const cartHandler = (item: any) => {
     try {
-      const url = `${process.env.REACT_APP_API_URL}cart/cart?userId=${userId}`;
+      const url = `${process.env.REACT_APP_API_URL}cart/?userId=${userId}`;
       axios.post(url, item).then((res) => {
         toast.success("Add to cart successfully", {
           autoClose: 1000,

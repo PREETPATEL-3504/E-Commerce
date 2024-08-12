@@ -5,7 +5,7 @@ const sequelize = new Sequelize("E-commerce", "root", "root", {
   dialect: "mysql",
 });
 
-const Product = sequelize.define("Product", {
+const Product = sequelize.define("products", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,

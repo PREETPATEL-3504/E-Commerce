@@ -8,7 +8,7 @@ const AddProducts = () => {
   const AdminId = localStorage.getItem("id");
   const token = localStorage.getItem("token");
   const { id } = useParams();
-    
+
   interface FormData {
     name: string;
     price: string | number;
@@ -27,28 +27,33 @@ const AddProducts = () => {
     AdminId: 0,
   });
 
-
   useEffect(() => {
-    const fetchdata = async () => {
-      const url = `${process.env.REACT_APP_API_URL}product/products/${id}`;
+    if (id) {
+      fetchdata();
+    }
+  }, [id]);
+
+  const fetchdata = async () => {
+    try {
+      const url = `${process.env.REACT_APP_API_URL}product/id/${id}`;
       const res = await axios.get(url, {
         headers: {
           Authorization: token,
         },
       });
       setData(res.data);
-    };
-    if (id) {
-      fetchdata();
+    } catch (error) {
+      toast.error("Error fetching product", {
+        autoClose: 1000,
+      });
     }
-  }, [id]);
-
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (id) {
       try {
-        const url = `${process.env.REACT_APP_API_URL}product/products/${id}`;
+        const url = `${process.env.REACT_APP_API_URL}product/${id}`;
         const res = await axios.patch(url, data, {
           headers: {
             Authorization: token,
@@ -62,7 +67,11 @@ const AddProducts = () => {
         } else {
           alert("Error updating user");
         }
-      } catch (error) {}
+      } catch (error) {
+        toast.error("Error updating product", {
+          autoClose: 1000,
+        });
+      }
     } else {
       try {
         const formdata = new FormData();
@@ -73,7 +82,7 @@ const AddProducts = () => {
         formdata.append("image_url", data.image_url);
         formdata.append("AdminId", String(AdminId));
 
-        const url = `${process.env.REACT_APP_API_URL}product/products`;
+        const url = `${process.env.REACT_APP_API_URL}product/`;
         const res = await axios.post(url, formdata, {
           headers: {
             Authorization: token,

@@ -15,7 +15,7 @@ const AdminProductlist = () => {
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
 
   useEffect(() => {
-    const url = `${process.env.REACT_APP_API_URL}product/products?offset=${
+    const url = `${process.env.REACT_APP_API_URL}product?offset=${
       offset * itemsPerPage
     }&limit=${itemsPerPage}&AdminId=${adminid}`;
     axios
@@ -27,12 +27,16 @@ const AdminProductlist = () => {
       .then((res) => {
         setProducts(res.data.data);
         setTotalProductsCount(res.data.total);
+      }).catch((err) => {
+        toast.error("Error fetching products", {
+          autoClose: 1000,
+        });
       });
   }, [offset]);
 
   const onDelete = (id: any) => {
     axios
-      .delete(`${process.env.REACT_APP_API_URL}product/products/${id}`, {
+      .delete(`${process.env.REACT_APP_API_URL}product/${id}`, {
         headers: { Authorization: token },
       })
       .then(() => {

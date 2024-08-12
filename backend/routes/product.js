@@ -10,10 +10,10 @@ const upload = require("../controller/multerConfig");
 const verifyToken = require("../middleware/jwtVerify");
 const router = express.Router();
 
-router.post("/products", upload.single("image_url"), addProduct);
-router.route("/products").get(verifyToken, getProduct);
-router.route("/products/:id").delete(verifyToken, deleteProduct);
-router.route("/products/:id").patch(verifyToken, updateProduct);
-router.route("/products/:id").get(verifyToken, getProductbyid);
+router.post("/", upload.single("image_url"), addProduct);
+router.route("/").get(verifyToken, getProduct);
+router.route("/:id").delete(verifyToken, deleteProduct);
+router.route("/:id").patch(verifyToken, updateProduct);
+router.route("/id/:id").get(getProductbyid);
 
 module.exports = router;

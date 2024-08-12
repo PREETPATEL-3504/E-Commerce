@@ -3,11 +3,11 @@ const{ addToCart, getCart, deleteItem, countItem, addQuantityToCart, minusQuanti
 
 const router = express.Router(); 
 
-router.post('/cart', addToCart);
-router.get('/cart', getCart);
-router.delete('/cart/:id', deleteItem);
-router.get('/cart/:id', countItem);
-router.put('/cart/add/:id', addQuantityToCart);
-router.put('/cart/remove/:id', minusQuantityToCart);
+router.post('/', addToCart);
+router.get('/', getCart);
+router.delete('/:id', deleteItem);
+router.get('/count/:id', countItem);
+router.put('/increse/:id', addQuantityToCart);
+router.put('/decrese/:id', minusQuantityToCart);
 
 module.exports = router;
