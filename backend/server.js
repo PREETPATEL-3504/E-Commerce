@@ -4,11 +4,11 @@ const db = require("./db");
 const bodyParser = require("body-parser");
 const path = require("path");
 const { app, server } = require("./socket");
-const cron = require("./services/cron");
 const router = require("./routes/index");
+require("dotenv").config();
 
 const corsOption = {
-  origin: "http://localhost:3000",
+  origin: `${process.env.REACT_API}`,
   credentials: true,
 };
 
@@ -21,6 +21,6 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 // Routes
 app.use("/", router);
 
-server.listen(5000, () => {
-  console.log("Server is running on port 5000");
+server.listen(`${process.env.PORT}`, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
